@@ -1,0 +1,117 @@
+import React from 'react';
+import { Wand2, Download, CheckCircle, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { SectionAccordion } from './SectionAccordion';
+import { ProposalSection, ProposalConfig } from '../types/proposal';
+
+interface SectionGeneratorTabProps {
+  sections: ProposalSection[];
+  config: ProposalConfig;
+  onGenerateSection: (sectionId: string) => void;
+  onGenerateAll: () => void;
+  onContentChange: (sectionId: string, content: string) => void;
+  onExportDocx: () => void;
+  isGenerating: boolean;
+  canExport: boolean;
+}
+
+export function SectionGeneratorTab({
+  sections,
+  config,
+  onGenerateSection,
+  onGenerateAll,
+  onContentChange,
+  onExportDocx,
+  isGenerating,
+  canExport
+}: SectionGeneratorTabProps) {
+  const completedSections = sections.filter(s => s.status === 'success' || s.status === 'modified').length;
+  const totalSections = sections.length;
+  const progressPercentage = (completedSections / totalSections) * 100;
+
+  return (
+    <div className="space-y-8 animate-fade-in-up">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Section Generator</h2>
+          <p className="text-gray-600">Generate and edit individual proposal sections using AI.</p>
+        </div>
+        
+        <Button
+          onClick={onGenerateAll}
+          disabled={isGenerating}
+          size="lg"
+          className="btn-primary"
+        >
+          {isGenerating ? (
+            <>
+              <Clock className="h-5 w-5 mr-2 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Wand2 className="h-5 w-5 mr-2" />
+              Generate All
+            </>
+          )}
+        </Button>
+      </div>
+
+      {/* Progress Section */}
+      <div className="glass-morphism rounded-xl p-6 border border-white/20">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center space-x-2">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            <span className="font-medium text-gray-900">Configuration Complete</span>
+          </div>
+          <span className="text-sm text-gray-600">
+            {completedSections} of {totalSections} sections completed
+          </span>
+        </div>
+        
+        <Progress value={progressPercentage} className="h-3" />
+        
+        <div className="mt-4 text-sm text-gray-600">
+          <p><strong>Client:</strong> {config.clientCompany.name}</p>
+          <p><strong>Project:</strong> {config.project.title}</p>
+        </div>
+      </div>
+
+      {/* Section Accordions */}
+      <div className="space-y-4">
+        {sections.map((section) => (
+          <SectionAccordion
+            key={section.id}
+            section={section}
+            onGenerate={onGenerateSection}
+            onContentChange={onContentChange}
+            isGenerating={isGenerating}
+          />
+        ))}
+      </div>
+
+      {/* Export Section */}
+      {canExport && (
+        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200 p-6 animate-scale-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Ready to Export</h3>
+              <p className="text-gray-600">
+                All sections have been generated successfully. Export your professional SOW document.
+              </p>
+            </div>
+            <Button
+              onClick={onExportDocx}
+              size="lg"
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold transition-all duration-300 hover:scale-105"
+            >
+              <Download className="h-5 w-5 mr-2" />
+              Export to DOCX
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
