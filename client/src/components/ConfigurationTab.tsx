@@ -43,23 +43,29 @@ export function ConfigurationTab({
   };
 
   return (
-    <div className="space-y-8 animate-fade-in-up">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Project Configuration</h2>
-        <p className="text-gray-600">Set up your company information, client details, and project specifications.</p>
-        {isLocked && (
-          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-green-800 font-medium">✓ Configuration Locked - Ready for Generation</p>
+    <div className="space-y-8">
+      {/* Status Header */}
+      {isLocked && (
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 text-center">
+          <div className="flex items-center justify-center space-x-2">
+            <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <p className="text-green-800 font-semibold">Configuration Locked & Ready for Generation</p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Your Company */}
-        <Card className="glass-morphism border-white/20">
-          <CardHeader>
-            <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-              <Building className="h-5 w-5 mr-2 text-primary" />
+        <Card className="bg-white/70 backdrop-blur-sm border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-[#E9204F]/5 to-transparent">
+            <CardTitle className="flex items-center text-xl font-bold text-gray-900">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#E9204F] to-[#C41E3A] rounded-lg flex items-center justify-center mr-3">
+                <Building className="h-4 w-4 text-white" />
+              </div>
               Your Company
             </CardTitle>
           </CardHeader>
@@ -124,10 +130,12 @@ export function ConfigurationTab({
         </Card>
 
         {/* Client Company */}
-        <Card className="glass-morphism border-white/20">
-          <CardHeader>
-            <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-              <Handshake className="h-5 w-5 mr-2 text-primary" />
+        <Card className="bg-white/70 backdrop-blur-sm border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-blue-50/50 to-transparent">
+            <CardTitle className="flex items-center text-xl font-bold text-gray-900">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+                <Handshake className="h-4 w-4 text-white" />
+              </div>
               Client Company
             </CardTitle>
           </CardHeader>
@@ -193,10 +201,12 @@ export function ConfigurationTab({
       </div>
 
       {/* Project Details */}
-      <Card className="glass-morphism border-white/20">
-        <CardHeader>
-          <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-            <FolderOpen className="h-5 w-5 mr-2 text-primary" />
+      <Card className="bg-white/70 backdrop-blur-sm border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300">
+        <CardHeader className="bg-gradient-to-r from-purple-50/50 to-transparent">
+          <CardTitle className="flex items-center text-xl font-bold text-gray-900">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+              <FolderOpen className="h-4 w-4 text-white" />
+            </div>
             Project Details
           </CardTitle>
         </CardHeader>
@@ -237,10 +247,12 @@ export function ConfigurationTab({
       </Card>
 
       {/* Section List */}
-      <Card className="glass-morphism border-white/20">
-        <CardHeader>
-          <CardTitle className="flex items-center text-lg font-semibold text-gray-900">
-            <List className="h-5 w-5 mr-2 text-primary" />
+      <Card className="bg-white/70 backdrop-blur-sm border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300">
+        <CardHeader className="bg-gradient-to-r from-emerald-50/50 to-transparent">
+          <CardTitle className="flex items-center text-xl font-bold text-gray-900">
+            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
+              <List className="h-4 w-4 text-white" />
+            </div>
             Proposal Sections
           </CardTitle>
         </CardHeader>
@@ -264,17 +276,23 @@ export function ConfigurationTab({
       </Card>
 
       {/* Start Generation Button */}
-      <div className="flex justify-center">
-        <Button
-          onClick={onStartGeneration}
-          disabled={!isValid || isLocked}
-          size="lg"
-          className="btn-primary px-8 py-4 text-lg"
-        >
-          <Play className="h-5 w-5 mr-2" />
-          {isLocked ? 'Configuration Locked' : 'Start Generating'}
-        </Button>
-      </div>
+      {!isLocked && (
+        <div className="flex justify-center pt-8">
+          <Button
+            onClick={onStartGeneration}
+            disabled={!isValid}
+            size="lg"
+            className="bg-gradient-to-r from-[#E9204F] to-[#C41E3A] hover:from-[#C41E3A] hover:to-[#A01830] text-white px-12 py-4 text-lg font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                <Play className="h-3 w-3 text-white" />
+              </div>
+              <span>Start Generating Proposal</span>
+            </div>
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

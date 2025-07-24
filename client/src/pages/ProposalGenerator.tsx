@@ -268,111 +268,156 @@ export default function ProposalGenerator() {
   const canExport = sections.length > 0 && sections.some(s => s.status === 'success' || s.status === 'modified');
 
   return (
-    <div className="min-h-screen relative">
-      {/* Floating Background Shapes */}
-      <div className="floating-bg-shapes">
-        <div className="floating-shape floating-shape-1"></div>
-        <div className="floating-shape floating-shape-2"></div>
-        <div className="floating-shape floating-shape-3"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 relative overflow-hidden">
+      {/* Enhanced Background with D3 Branding */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-[#E9204F]/5 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-40 right-32 w-80 h-80 bg-gradient-to-tl from-slate-200/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-gradient-to-r from-[#E9204F]/3 to-transparent rounded-full blur-2xl"></div>
       </div>
 
       {/* Header */}
-      <header className="glass-morphism border-0 border-b border-white/20 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <header className="relative z-20 bg-white/80 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo and Brand */}
             <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">D3</span>
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#E9204F] to-[#C41E3A] rounded-xl flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-xl tracking-tight">D3</span>
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white shadow-sm"></div>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Proposal Generator</h1>
-                <p className="text-sm text-gray-600">Professional SOW Builder</p>
+                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">D3 Alpha</h1>
+                <p className="text-sm text-[#E9204F] font-medium">Digital Proposal Generator</p>
               </div>
             </div>
             
-            {/* Progress Indicator */}
-            <div className="flex items-center space-x-2">
-              <div className={`progress-step rounded-full w-8 h-8 flex items-center justify-center text-sm font-semibold ${
-                activeTab === 'configuration' ? 'active bg-primary text-white' : 'bg-gray-200'
-              }`}>1</div>
-              <div className="w-8 h-0.5 bg-gray-300"></div>
-              <div className={`progress-step rounded-full w-8 h-8 flex items-center justify-center text-sm font-semibold ${
-                config.isConfigurationComplete ? (activeTab === 'generator' ? 'active bg-primary text-white' : 'completed bg-green-500 text-white') : 'bg-gray-200'
-              }`}>2</div>
-              <div className="w-8 h-0.5 bg-gray-300"></div>
-              <div className={`progress-step rounded-full w-8 h-8 flex items-center justify-center text-sm font-semibold ${
-                activeTab === 'settings' ? 'active bg-primary text-white' : 'bg-gray-200'
-              }`}>3</div>
+            {/* Enhanced Progress Indicator */}
+            <div className="flex items-center space-x-3 bg-white/60 backdrop-blur-sm rounded-full px-6 py-3 border border-gray-200/50">
+              <div className="flex items-center space-x-1">
+                <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  activeTab === 'configuration' ? 'bg-[#E9204F] scale-125' : 'bg-gray-300'
+                }`}></div>
+                <span className={`text-xs font-medium ${
+                  activeTab === 'configuration' ? 'text-[#E9204F]' : 'text-gray-500'
+                }`}>Config</span>
+              </div>
+              <div className="w-8 h-px bg-gray-300"></div>
+              <div className="flex items-center space-x-1">
+                <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  config.isConfigurationComplete ? (activeTab === 'generator' ? 'bg-[#E9204F] scale-125' : 'bg-green-500') : 'bg-gray-300'
+                }`}></div>
+                <span className={`text-xs font-medium ${
+                  config.isConfigurationComplete ? (activeTab === 'generator' ? 'text-[#E9204F]' : 'text-green-600') : 'text-gray-500'
+                }`}>Generate</span>
+              </div>
+              <div className="w-8 h-px bg-gray-300"></div>
+              <div className="flex items-center space-x-1">
+                <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  activeTab === 'settings' ? 'bg-[#E9204F] scale-125' : 'bg-gray-300'
+                }`}></div>
+                <span className={`text-xs font-medium ${
+                  activeTab === 'settings' ? 'text-[#E9204F]' : 'text-gray-500'
+                }`}>Settings</span>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
-          <TabsList className="glass-morphism border border-white/20 p-1 mb-8">
-            <TabsTrigger 
-              value="configuration" 
-              className="data-[state=active]:tab-active"
-            >
-              Configuration
-            </TabsTrigger>
-            <TabsTrigger 
-              value="generator" 
-              className="data-[state=active]:tab-active"
-              disabled={!config.isConfigurationComplete}
-            >
-              Section Generator
-              {!config.isConfigurationComplete && (
-                <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
-                  Locked
-                </span>
-              )}
-            </TabsTrigger>
-            <TabsTrigger 
-              value="settings" 
-              className="data-[state=active]:tab-active"
-            >
-              Settings
-            </TabsTrigger>
-          </TabsList>
+      {/* Page Title Section */}
+      <section className="relative z-10 bg-gradient-to-r from-white/70 to-white/50 backdrop-blur-sm border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Professional Statement of Work Generator
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Create compelling, professional proposals with AI-powered content generation. 
+              Configure your project details, generate custom sections, and export polished DOCX documents.
+            </p>
+          </div>
+        </div>
+      </section>
 
-          <TabsContent value="configuration" className="glass-morphism rounded-2xl p-8">
-            <ConfigurationTab
-              config={config}
-              onConfigChange={handleConfigChange}
-              onStartGeneration={handleStartGeneration}
-              isValid={isConfigValid}
-              validationErrors={validationErrors}
-              isLocked={config.isConfigurationComplete}
-            />
-          </TabsContent>
+      {/* Navigation Tabs */}
+      <section className="relative z-10 bg-white/40 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+            <TabsList className="inline-flex h-12 items-center justify-center rounded-xl bg-white/80 backdrop-blur-sm p-1 text-muted-foreground shadow-lg border border-gray-200/50 mb-8">
+              <TabsTrigger 
+                value="configuration" 
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-6 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-[#E9204F] data-[state=active]:text-white data-[state=active]:shadow-md"
+              >
+                Project Configuration
+              </TabsTrigger>
+              <TabsTrigger 
+                value="generator" 
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-6 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-[#E9204F] data-[state=active]:text-white data-[state=active]:shadow-md"
+                disabled={!config.isConfigurationComplete}
+              >
+                Section Generator
+                {!config.isConfigurationComplete && (
+                  <span className="ml-2 text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                    Locked
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="settings" 
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-6 py-2 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-[#E9204F] data-[state=active]:text-white data-[state=active]:shadow-md"
+              >
+                Settings & API
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="generator" className="glass-morphism rounded-2xl p-8">
-            <SectionGeneratorTab
-              sections={sections}
-              config={config}
-              onGenerateSection={handleGenerateSection}
-              onGenerateAll={handleGenerateAll}
-              onContentChange={handleContentChange}
-              onExportDocx={handleExportDocx}
-              isGenerating={isGenerating}
-              canExport={canExport}
-            />
-          </TabsContent>
+            {/* Main Content Area */}
+            <div className="pb-16">
+              <TabsContent value="configuration" className="mt-0">
+                <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-xl p-8">
+                  <ConfigurationTab
+                    config={config}
+                    onConfigChange={handleConfigChange}
+                    onStartGeneration={handleStartGeneration}
+                    isValid={isConfigValid}
+                    validationErrors={validationErrors}
+                    isLocked={config.isConfigurationComplete}
+                  />
+                </div>
+              </TabsContent>
 
-          <TabsContent value="settings" className="glass-morphism rounded-2xl p-8">
-            <SettingsTab
-              settings={settings}
-              onSettingsChange={handleSettingsChange}
-              onSaveSettings={handleSaveSettings}
-              onClearStorage={handleClearStorage}
-              lastSaved={lastSaved}
-            />
-          </TabsContent>
-        </Tabs>
-      </main>
+              <TabsContent value="generator" className="mt-0">
+                <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-xl p-8">
+                  <SectionGeneratorTab
+                    sections={sections}
+                    config={config}
+                    onGenerateSection={handleGenerateSection}
+                    onGenerateAll={handleGenerateAll}
+                    onContentChange={handleContentChange}
+                    onExportDocx={handleExportDocx}
+                    isGenerating={isGenerating}
+                    canExport={canExport}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="settings" className="mt-0">
+                <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-xl p-8">
+                  <SettingsTab
+                    settings={settings}
+                    onSettingsChange={handleSettingsChange}
+                    onSaveSettings={handleSaveSettings}
+                    onClearStorage={handleClearStorage}
+                    lastSaved={lastSaved}
+                  />
+                </div>
+              </TabsContent>
+            </div>
+          </Tabs>
+        </div>
+      </section>
     </div>
   );
 }
