@@ -82,14 +82,6 @@ export default function ProposalGenerator() {
     }
   }, [config.sections]);
 
-  // Auto-save functionality
-  useEffect(() => {
-    if (settings.autoSave) {
-      const timestamp = new Date().toLocaleString();
-      setLastSaved(timestamp);
-    }
-  }, [config, sections, settings.autoSave]);
-
   // Validation
   const validateForm = useCallback(() => {
     const result = validateConfiguration(config);
@@ -106,7 +98,16 @@ export default function ProposalGenerator() {
     return true;
   }, [config]);
 
-  const isConfigValid = Object.keys(validationErrors).length === 0 && validateForm();
+  // Initial validation and auto-save functionality
+  useEffect(() => {
+    validateForm();
+    if (settings.autoSave) {
+      const timestamp = new Date().toLocaleString();
+      setLastSaved(timestamp);
+    }
+  }, [config, sections, settings.autoSave, validateForm]);
+
+  const isConfigValid = Object.keys(validationErrors).length === 0;
 
   // Configuration handlers
   const handleConfigChange = (newConfig: ProposalConfig) => {
