@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { RefreshCw } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { ConfigurationTab } from '../components/ConfigurationTab';
@@ -25,7 +27,9 @@ const defaultConfig: ProposalConfig = {
   },
   project: {
     title: '',
-    serviceDescription: ''
+    serviceDescription: '',
+    annualBudget: '',
+    targetGeo: ''
   },
   sections: [
     'Introduction',
@@ -130,6 +134,29 @@ export default function ProposalGenerator() {
         variant: "destructive",
       });
     }
+  };
+
+  const handleUnlockConfiguration = () => {
+    setConfig({ ...config, isConfigurationComplete: false });
+    setSections([]); // Clear all generated sections
+    setActiveTab('configuration');
+    toast({
+      title: "Configuration Unlocked",
+      description: "Configuration is unlocked. All generated content has been cleared.",
+      variant: "destructive",
+    });
+  };
+
+  const handleStartFresh = () => {
+    setConfig(defaultConfig);
+    setSections([]);
+    setSettings(defaultSettings);
+    setLastSaved('');
+    setActiveTab('configuration');
+    toast({
+      title: "Reset Complete",
+      description: "All data has been cleared. Starting fresh.",
+    });
   };
 
   // Section generation handlers
@@ -297,33 +324,46 @@ export default function ProposalGenerator() {
             </div>
             
             {/* Enhanced Progress Indicator */}
-            <div className="flex items-center space-x-3 bg-white/60 backdrop-blur-sm rounded-full px-6 py-3 border border-gray-200/50">
-              <div className="flex items-center space-x-1">
-                <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  activeTab === 'configuration' ? 'bg-[#E9204F] scale-125' : 'bg-gray-300'
-                }`}></div>
-                <span className={`text-xs font-medium ${
-                  activeTab === 'configuration' ? 'text-[#E9204F]' : 'text-gray-500'
-                }`}>Config</span>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3 bg-white/60 backdrop-blur-sm rounded-full px-6 py-3 border border-gray-200/50">
+                <div className="flex items-center space-x-1">
+                  <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    activeTab === 'configuration' ? 'bg-[#E9204F] scale-125' : 'bg-gray-300'
+                  }`}></div>
+                  <span className={`text-xs font-medium ${
+                    activeTab === 'configuration' ? 'text-[#E9204F]' : 'text-gray-500'
+                  }`}>Config</span>
+                </div>
+                <div className="w-8 h-px bg-gray-300"></div>
+                <div className="flex items-center space-x-1">
+                  <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    config.isConfigurationComplete ? (activeTab === 'generator' ? 'bg-[#E9204F] scale-125' : 'bg-green-500') : 'bg-gray-300'
+                  }`}></div>
+                  <span className={`text-xs font-medium ${
+                    config.isConfigurationComplete ? (activeTab === 'generator' ? 'text-[#E9204F]' : 'text-green-600') : 'text-gray-500'
+                  }`}>Generate</span>
+                </div>
+                <div className="w-8 h-px bg-gray-300"></div>
+                <div className="flex items-center space-x-1">
+                  <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    activeTab === 'settings' ? 'bg-[#E9204F] scale-125' : 'bg-gray-300'
+                  }`}></div>
+                  <span className={`text-xs font-medium ${
+                    activeTab === 'settings' ? 'text-[#E9204F]' : 'text-gray-500'
+                  }`}>Settings</span>
+                </div>
               </div>
-              <div className="w-8 h-px bg-gray-300"></div>
-              <div className="flex items-center space-x-1">
-                <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  config.isConfigurationComplete ? (activeTab === 'generator' ? 'bg-[#E9204F] scale-125' : 'bg-green-500') : 'bg-gray-300'
-                }`}></div>
-                <span className={`text-xs font-medium ${
-                  config.isConfigurationComplete ? (activeTab === 'generator' ? 'text-[#E9204F]' : 'text-green-600') : 'text-gray-500'
-                }`}>Generate</span>
-              </div>
-              <div className="w-8 h-px bg-gray-300"></div>
-              <div className="flex items-center space-x-1">
-                <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  activeTab === 'settings' ? 'bg-[#E9204F] scale-125' : 'bg-gray-300'
-                }`}></div>
-                <span className={`text-xs font-medium ${
-                  activeTab === 'settings' ? 'text-[#E9204F]' : 'text-gray-500'
-                }`}>Settings</span>
-              </div>
+              
+              {/* Start Fresh Button */}
+              <Button
+                onClick={handleStartFresh}
+                variant="outline"
+                size="sm"
+                className="text-red-600 border-red-300 hover:bg-red-50"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Start Fresh
+              </Button>
             </div>
           </div>
         </div>
@@ -383,6 +423,7 @@ export default function ProposalGenerator() {
                     config={config}
                     onConfigChange={handleConfigChange}
                     onStartGeneration={handleStartGeneration}
+                    onUnlockConfiguration={handleUnlockConfiguration}
                     isValid={isConfigValid}
                     validationErrors={validationErrors}
                     isLocked={config.isConfigurationComplete}

@@ -8,6 +8,8 @@ export interface CompanyInfo {
 export interface ProjectInfo {
   title: string;
   serviceDescription: string;
+  annualBudget?: string;
+  targetGeo?: string;
 }
 
 export interface ProposalSection {

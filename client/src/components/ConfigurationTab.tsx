@@ -1,5 +1,5 @@
 import React from 'react';
-import { Building, Handshake, FolderOpen, List, Play } from 'lucide-react';
+import { Building, Handshake, FolderOpen, List, Play, Unlock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,6 +11,7 @@ interface ConfigurationTabProps {
   config: ProposalConfig;
   onConfigChange: (config: ProposalConfig) => void;
   onStartGeneration: () => void;
+  onUnlockConfiguration: () => void;
   isValid: boolean;
   validationErrors: Record<string, string>;
   isLocked?: boolean;
@@ -20,6 +21,7 @@ export function ConfigurationTab({
   config, 
   onConfigChange, 
   onStartGeneration, 
+  onUnlockConfiguration,
   isValid,
   validationErrors,
   isLocked = false
@@ -46,15 +48,29 @@ export function ConfigurationTab({
     <div className="space-y-8">
       {/* Status Header */}
       {isLocked && (
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 text-center">
-          <div className="flex items-center justify-center space-x-2">
-            <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p className="text-green-800 font-semibold">Configuration Locked & Ready for Generation</p>
             </div>
-            <p className="text-green-800 font-semibold">Configuration Locked & Ready for Generation</p>
+            <Button
+              onClick={onUnlockConfiguration}
+              variant="outline"
+              size="sm"
+              className="text-orange-600 border-orange-300 hover:bg-orange-50"
+            >
+              <Unlock className="h-4 w-4 mr-2" />
+              Unlock Configuration
+            </Button>
           </div>
+          <p className="text-sm text-orange-600 mt-2 ml-7">
+            ⚠️ Warning: Unlocking will delete all generated content in Section Generator
+          </p>
         </div>
       )}
 
@@ -211,36 +227,76 @@ export function ConfigurationTab({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="project-title">Project Title *</Label>
-              <Input
-                id="project-title"
-                value={config.project.title}
-                onChange={(e) => updateConfig('project.title', e.target.value)}
-                placeholder="Consolidated Digital Growth"
-                className="form-input"
-                disabled={isLocked}
-              />
-              {validationErrors['project.title'] && (
-                <p className="text-sm text-red-600 mt-1">{validationErrors['project.title']}</p>
-              )}
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <Label htmlFor="project-title">Project Title *</Label>
+                <Input
+                  id="project-title"
+                  value={config.project.title}
+                  onChange={(e) => updateConfig('project.title', e.target.value)}
+                  placeholder="Consolidated Digital Growth"
+                  className="form-input"
+                  disabled={isLocked}
+                />
+                {validationErrors['project.title'] && (
+                  <p className="text-sm text-red-600 mt-1">{validationErrors['project.title']}</p>
+                )}
+              </div>
+              
+              <div>
+                <Label htmlFor="annual-budget">Annual Project Budget</Label>
+                <Input
+                  id="annual-budget"
+                  value={config.project.annualBudget || ''}
+                  onChange={(e) => updateConfig('project.annualBudget', e.target.value)}
+                  placeholder="e.g., $50,000 - $100,000"
+                  className="form-input"
+                  disabled={isLocked}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="target-geo">Target GEO (Optional)</Label>
+                <Input
+                  id="target-geo"
+                  value={config.project.targetGeo || ''}
+                  onChange={(e) => updateConfig('project.targetGeo', e.target.value)}
+                  placeholder="e.g., North America, Global, EMEA"
+                  className="form-input"
+                  disabled={isLocked}
+                />
+              </div>
             </div>
-            
-            <div>
-              <Label htmlFor="project-service">Service Description *</Label>
-              <Textarea
-                id="project-service"
-                value={config.project.serviceDescription}
-                onChange={(e) => updateConfig('project.serviceDescription', e.target.value)}
-                placeholder="Comprehensive e-commerce optimization and digital marketing services"
-                className="form-input resize-none"
-                rows={3}
-                disabled={isLocked}
-              />
-              {validationErrors['project.serviceDescription'] && (
-                <p className="text-sm text-red-600 mt-1">{validationErrors['project.serviceDescription']}</p>
-              )}
+
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <Label htmlFor="project-service">Service Description *</Label>
+                <Textarea
+                  id="project-service"
+                  value={config.project.serviceDescription}
+                  onChange={(e) => updateConfig('project.serviceDescription', e.target.value)}
+                  placeholder="Comprehensive e-commerce optimization and digital marketing services"
+                  className="form-input resize-none"
+                  rows={3}
+                  disabled={isLocked}
+                />
+                {validationErrors['project.serviceDescription'] && (
+                  <p className="text-sm text-red-600 mt-1">{validationErrors['project.serviceDescription']}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="target-geo">Target Geography (Optional)</Label>
+                <Input
+                  id="target-geo"
+                  value={config.project.targetGeo || ''}
+                  onChange={(e) => updateConfig('project.targetGeo', e.target.value)}
+                  placeholder="e.g., United States, Europe, Global"
+                  className="form-input"
+                  disabled={isLocked}
+                />
+              </div>
             </div>
           </div>
         </CardContent>

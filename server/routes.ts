@@ -27,8 +27,12 @@ Company Description: ${yourCompany.description}
 
 Project Title: ${project.title}
 Service Description: ${project.serviceDescription}
+${project.annualBudget ? `Annual Project Budget: ${project.annualBudget}` : ''}
+${project.targetGeo ? `Target Geographic Area: ${project.targetGeo}` : ''}
 
-Please write a comprehensive, professional ${sectionTitle} section that is appropriate for a Statement of Work document. Use clear formatting with bullet points where appropriate. Make it specific to this project and companies involved.`;
+IMPORTANT: Write ONLY the content for the "${sectionTitle}" section. Do not include section headings, titles, or any other parts of the document. Just provide the body content for this specific section that would appear under the "${sectionTitle}" heading.
+
+Please write comprehensive, professional content that is appropriate for this section of a Statement of Work document. Use clear formatting with bullet points, numbered lists, or tables where appropriate. Make it specific to this project and companies involved.`;
 
       let result = "";
 
