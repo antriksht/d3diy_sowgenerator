@@ -154,8 +154,9 @@ export default function ProposalGenerator() {
         yourCompany: config.yourCompany,
         clientCompany: config.clientCompany,
         project: config.project,
-        openaiApiKey: !settings.useSystemKeys ? settings.openaiApiKey : undefined,
-        geminiApiKey: !settings.useSystemKeys ? settings.geminiApiKey : undefined,
+        useSystemKeys: settings.useSystemKeys,
+        openaiApiKey: settings.openaiApiKey,
+        geminiApiKey: settings.geminiApiKey,
       });
 
       setSections(prev => prev.map(s => 
