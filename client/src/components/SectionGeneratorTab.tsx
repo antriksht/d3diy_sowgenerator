@@ -3,15 +3,18 @@ import { Wand2, Download, CheckCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { SectionAccordion } from './SectionAccordion';
-import { ProposalSection, ProposalConfig } from '../types/proposal';
+import { PromptEditor } from './PromptEditor';
+import { ProposalSection, ProposalConfig, AISettings } from '../types/proposal';
 
 interface SectionGeneratorTabProps {
   sections: ProposalSection[];
   config: ProposalConfig;
+  settings: AISettings;
   onGenerateSection: (sectionId: string) => void;
   onGenerateAll: () => void;
   onContentChange: (sectionId: string, content: string) => void;
   onExportDocx: () => void;
+  onPromptSave: (sectionTitle: string, customPrompt?: string) => void;
   isGenerating: boolean;
   canExport: boolean;
 }
@@ -19,10 +22,12 @@ interface SectionGeneratorTabProps {
 export function SectionGeneratorTab({
   sections,
   config,
+  settings,
   onGenerateSection,
   onGenerateAll,
   onContentChange,
   onExportDocx,
+  onPromptSave,
   isGenerating,
   canExport
 }: SectionGeneratorTabProps) {
@@ -84,8 +89,10 @@ export function SectionGeneratorTab({
           <SectionAccordion
             key={section.id}
             section={section}
+            sectionPrompts={settings.sectionPrompts}
             onGenerate={onGenerateSection}
             onContentChange={onContentChange}
+            onPromptSave={onPromptSave}
             isGenerating={isGenerating}
           />
         ))}

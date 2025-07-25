@@ -28,12 +28,21 @@ export interface ProposalConfig {
   isConfigurationComplete: boolean;
 }
 
+export interface SectionPrompt {
+  sectionTitle: string;
+  customPrompt?: string;
+  exampleContent?: string;
+  isDefault: boolean;
+}
+
 export interface AISettings {
   useSystemKeys: boolean;
   openaiApiKey?: string;
   geminiApiKey?: string;
   autoSave: boolean;
   showProgress: boolean;
+  sectionPrompts: SectionPrompt[];
+  fallbackPrompt: string;
 }
 
 export interface ProposalState {

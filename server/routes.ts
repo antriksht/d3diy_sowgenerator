@@ -6,7 +6,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Generation endpoint
   app.post("/api/generate", async (req, res) => {
     try {
-      const { sectionTitle, yourCompany, clientCompany, project, useSystemKeys, openaiApiKey, geminiApiKey } = req.body;
+      const { sectionTitle, yourCompany, clientCompany, project, useSystemKeys, openaiApiKey, geminiApiKey, customPrompt, sectionExample } = req.body;
 
       // Use system keys or provided keys
       const effectiveOpenAIKey = useSystemKeys ? process.env.OPENAI_API_KEY : openaiApiKey;
@@ -16,27 +16,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No API keys available. Please configure API keys in settings." });
       }
 
-      // Section-specific examples for better AI generation
-      const getSectionExample = (sectionTitle: string) => {
-        if (sectionTitle.toLowerCase() === 'introduction') {
-          return `
-
-EXAMPLE FORMAT FOR INTRODUCTION SECTION:
-Use this as inspiration for structure and style, but customize all content for the actual companies and project:
-
-**Service Provider Company Name**
-
-Since its inception, [Service Provider Company] has been partnering with its global clients, some of which are Fortune 1000 companies, that leverage and rely on our broad portfolio of Digital Transformation, Software Architecture/R&D, Customer Care/BPO, E-commerce, Software services, Quality Assurance, Analytics/ML and Cloud Engineering offerings. Led by a strong leadership group, the globally acclaimed service firm today supports over 100 clients across North America, the Middle East, Europe, and APAC, with offices in the U.S., Europe, India, and the Philippines. Supported by outstanding talent, [Service Provider Company] blends technical and functional expertise with comprehensive cross-vertical and cross-domain knowledge to help achieve business objectives. Its consistent successes have led to global recognition from Deloitte twice, first as one of India's Fast 50 Technology companies and secondly as one of Asia's Fast 500 Technology companies. [Service Provider Company] is an official Microsoft Gold Certified partner, as well as a Salesforce Partner. [Service Provider Company]'s clientele is primarily international, mainly based in the US and UK.
-
-**Client Company Name**
-
-[Client Company] is a [industry] brand focused on providing [core value proposition]. The brand offers a curated portfolio of [products/services] tailored for modern consumers looking for [key benefits]. With a focus on [key differentiators], [Client Company] aims to differentiate itself in the marketplace.`;
-        }
-        return '';
-      };
-
-      // Create detailed prompt
-      const prompt = `Write a professional ${sectionTitle} section for a Statement of Work document.
+      // Build dynamic prompt using custom prompts or fallback
+      const buildPrompt = () => {
+        // Use custom prompt if provided, otherwise use fallback
+        const basePrompt = customPrompt || `Write a professional ${sectionTitle} section for a Statement of Work document.
 
 Client Company: ${clientCompany.name}
 Client Description: ${clientCompany.description}
@@ -51,9 +34,22 @@ ${project.targetGeo ? `Target Geographic Area: ${project.targetGeo}` : ''}
 
 IMPORTANT: Write ONLY the content for the "${sectionTitle}" section. Do not include section headings, titles, or any other parts of the document. Just provide the body content for this specific section that would appear under the "${sectionTitle}" heading.
 
-${getSectionExample(sectionTitle)}
-
 Please write comprehensive, professional content that is appropriate for this section of a Statement of Work document. Use clear formatting with bullet points, numbered lists, or tables where appropriate. Make it specific to this project and companies involved.`;
+
+        // Add section example if provided
+        if (sectionExample) {
+          return `${basePrompt}
+
+EXAMPLE FORMAT FOR ${sectionTitle.toUpperCase()} SECTION:
+Use this as inspiration for structure and style, but customize all content for the actual companies and project:
+
+${sectionExample}`;
+        }
+
+        return basePrompt;
+      };
+
+      const prompt = buildPrompt();
 
       // Log the full prompt being sent to AI
       console.log('\n=== AI GENERATION REQUEST ===');
@@ -205,11 +201,11 @@ Please write comprehensive, professional content that is appropriate for this se
       console.log('=== END SUCCESS ===\n');
 
       res.json({ content: result });
-    } catch (error) {
+    } catch (error: any) {
       console.log('\n=== CRITICAL ERROR ===');
       console.error("Generation error:", error);
-      console.log('Error details:', error.message);
-      console.log('Error stack:', error.stack);
+      console.log('Error details:', error?.message || 'Unknown error');
+      console.log('Error stack:', error?.stack || 'No stack trace');
       console.log('=== END CRITICAL ERROR ===\n');
       res.status(500).json({ error: "Internal server error during content generation." });
     }

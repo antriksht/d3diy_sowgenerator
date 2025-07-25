@@ -11,6 +11,7 @@ import { aiService } from '../services/aiService';
 import { docxService } from '../services/docxService';
 import { validateConfiguration } from '../utils/validation';
 import { ProposalState, ProposalSection, ProposalConfig, AISettings } from '../types/proposal';
+import { defaultSectionPrompts, defaultFallbackPrompt } from '../data/defaultSections';
 
 const defaultConfig: ProposalConfig = {
   yourCompany: {
@@ -31,20 +32,7 @@ const defaultConfig: ProposalConfig = {
     annualBudget: '',
     targetGeo: ''
   },
-  sections: [
-    'Introduction',
-    'Definitions and Acronyms',
-    'Scope of Work',
-    'Deliverables',
-    'Timelines',
-    'Assumptions',
-    'Exclusions',
-    'Commercials / Pricing',
-    'Change Control',
-    'Contact Details',
-    'Terms & Conditions',
-    'Acceptance & Signature'
-  ],
+  sections: defaultSectionPrompts.map(prompt => prompt.sectionTitle),
   isConfigurationComplete: false
 };
 
@@ -53,7 +41,9 @@ const defaultSettings: AISettings = {
   openaiApiKey: '',
   geminiApiKey: '',
   autoSave: true,
-  showProgress: true
+  showProgress: true,
+  sectionPrompts: defaultSectionPrompts,
+  fallbackPrompt: defaultFallbackPrompt
 };
 
 export default function ProposalGenerator() {
@@ -176,6 +166,9 @@ export default function ProposalGenerator() {
       const section = sections.find(s => s.id === sectionId);
       if (!section) throw new Error('Section not found');
 
+      // Find custom prompt and example for this section
+      const sectionPrompt = settings.sectionPrompts.find(p => p.sectionTitle === section.title);
+      
       const content = await aiService.generateSection({
         sectionTitle: section.title,
         yourCompany: config.yourCompany,
@@ -184,6 +177,8 @@ export default function ProposalGenerator() {
         useSystemKeys: settings.useSystemKeys,
         openaiApiKey: settings.openaiApiKey,
         geminiApiKey: settings.geminiApiKey,
+        customPrompt: sectionPrompt?.customPrompt || settings.fallbackPrompt,
+        sectionExample: sectionPrompt?.exampleContent,
       });
 
       setSections(prev => prev.map(s => 
@@ -277,6 +272,20 @@ export default function ProposalGenerator() {
     toast({
       title: "Settings Saved",
       description: "Your settings have been saved successfully.",
+    });
+  };
+
+  const handlePromptSave = (sectionTitle: string, customPrompt?: string) => {
+    const updatedPrompts = settings.sectionPrompts.map(prompt => 
+      prompt.sectionTitle === sectionTitle 
+        ? { ...prompt, customPrompt }
+        : prompt
+    );
+    
+    setSettings({ ...settings, sectionPrompts: updatedPrompts });
+    toast({
+      title: "Prompt Updated",
+      description: `Custom prompt for "${sectionTitle}" has been ${customPrompt ? 'saved' : 'reset to default'}.`,
     });
   };
 
@@ -436,10 +445,12 @@ export default function ProposalGenerator() {
                   <SectionGeneratorTab
                     sections={sections}
                     config={config}
+                    settings={settings}
                     onGenerateSection={handleGenerateSection}
                     onGenerateAll={handleGenerateAll}
                     onContentChange={handleContentChange}
                     onExportDocx={handleExportDocx}
+                    onPromptSave={handlePromptSave}
                     isGenerating={isGenerating}
                     canExport={canExport}
                   />

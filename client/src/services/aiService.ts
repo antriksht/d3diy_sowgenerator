@@ -8,6 +8,8 @@ interface AIGenerationOptions {
   useSystemKeys?: boolean;
   openaiApiKey?: string;
   geminiApiKey?: string;
+  customPrompt?: string;
+  sectionExample?: string;
 }
 
 export class AIService {
@@ -26,6 +28,8 @@ export class AIService {
           useSystemKeys: options.useSystemKeys ?? true,
           openaiApiKey: options.openaiApiKey,
           geminiApiKey: options.geminiApiKey,
+          customPrompt: options.customPrompt,
+          sectionExample: options.sectionExample,
         }),
       });
 

@@ -3,19 +3,24 @@ import { ChevronDown, RotateCcw, Check, Clock, AlertCircle, Edit3 } from 'lucide
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { ProposalSection } from '../types/proposal';
+import { ProposalSection, SectionPrompt } from '../types/proposal';
+import { PromptEditor } from './PromptEditor';
 
 interface SectionAccordionProps {
   section: ProposalSection;
+  sectionPrompts: SectionPrompt[];
   onGenerate: (sectionId: string) => void;
   onContentChange: (sectionId: string, content: string) => void;
+  onPromptSave: (sectionTitle: string, customPrompt?: string) => void;
   isGenerating: boolean;
 }
 
 export function SectionAccordion({ 
   section, 
+  sectionPrompts,
   onGenerate, 
   onContentChange, 
+  onPromptSave,
   isGenerating 
 }: SectionAccordionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -85,18 +90,25 @@ export function SectionAccordion({
           </span>
         </div>
         
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            onGenerate(section.id);
-          }}
-          disabled={isGenerating || section.status === 'generating'}
-          size="sm"
-          className="btn-primary"
-        >
-          <RotateCcw className="h-4 w-4 mr-2" />
-          {getButtonText()}
-        </Button>
+        <div className="flex items-center space-x-2">
+          <PromptEditor
+            sectionTitle={section.title}
+            sectionPrompts={sectionPrompts}
+            onPromptSave={onPromptSave}
+          />
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              onGenerate(section.id);
+            }}
+            disabled={isGenerating || section.status === 'generating'}
+            size="sm"
+            className="btn-primary"
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
+            {getButtonText()}
+          </Button>
+        </div>
       </div>
       
       {isExpanded && (
