@@ -109,3 +109,12 @@ The backend is minimal and primarily serves the frontend application. The core p
 - **Storage**: localStorage provides persistence without server dependency
 
 The application is designed to work as a standalone frontend application with optional backend services for enhanced features like user management and proposal history.
+
+## Recent Changes
+
+- **DOCX Export Fixed (July 25, 2025)**: Completely resolved document corruption by simplifying the DOCX generation approach
+- Removed complex markdown processing (tables, bullet lists, inline formatting) that was causing file corruption
+- Implemented clean, simple paragraph-based document generation while preserving content cleaning
+- Successfully maintained Arial font requirement and professional document structure
+- Content cleaning now works perfectly - removes all unwanted AI text after "---" markers
+- Documents now export cleanly and open properly in Microsoft Word without corruption
