@@ -5,6 +5,24 @@ export const defaultSectionPrompts: SectionPrompt[] = [
   {
     sectionTitle: 'Introduction',
     isDefault: true,
+    customPrompt: `Write a professional introduction section that introduces ONLY the two companies - {yourCompany.name} and {clientCompany.name}.
+
+STRUCTURE REQUIRED:
+1. First, write about {yourCompany.name} with its own heading
+2. Then, write about {clientCompany.name} with its own heading
+
+For {yourCompany.name}: Write a comprehensive description of the company including its background, services, achievements, global presence, certifications, and clientele based on: {yourCompany.description}
+
+For {clientCompany.name}: Write a professional overview based on: {clientCompany.description}
+
+CRITICAL RESTRICTIONS:
+- This section should ONLY introduce the companies themselves
+- DO NOT include project objectives, collaboration details, service proposals, budget information, or any project-specific content
+- DO NOT mention the project at all
+- Follow the exact format from the example where each company gets its own section with a clear heading
+- Keep the focus strictly on company introductions only
+
+Use the structure and style from the example content but customize all details for the actual companies.`,
     exampleContent: `{yourCompany.name}
 Since its inception, {yourCompany.name} has been partnering with its global clients, some of which are Fortune 1000 companies, that leverage and rely on our broad portfolio of Digital Transformation, Software Architecture/R&D, Customer Care/BPO, E-commerce, Software services, Quality Assurance, Analytics/ML and Cloud Engineering offerings. Led by a strong leadership group, the globally acclaimed service firm today supports over 100 clients across North America, the Middle East, Europe, and APAC, with offices in the U.S., Europe, India, and the Philippines. Supported by outstanding talent, {yourCompany.name} blends technical and functional expertise with comprehensive cross-vertical and cross-domain knowledge to help achieve business objectives. Its consistent successes have led to global recognition from Deloitte twice, first as one of India's Fast 50 Technology companies and secondly as one of Asia's Fast 500 Technology companies. {yourCompany.name} is an official Microsoft Gold Certified partner, as well as a Salesforce Partner. {yourCompany.name}'s clientele is primarily international, mainly based in the US and UK.
 
