@@ -1,0 +1,20 @@
+Write a professional Definitions and Acronyms section for a Statement of Work document.
+
+Client Company: Veridda
+Client Description: Veridda is a wellness brand focused on providing effective, science-backed supplements that support gut health, energy, and longevity. The brand offers a curated portfolio of formulations tailored for modern consumers looking for clean-label, functional nutrition. With a focus on ingredient transparency, dosage accuracy, and customer trust, Veridda aims to differentiate itself.
+
+Your Company: Intelegencia
+Company Description: Since its inception, Intelegencia Technologies Corporation (hereinafter referred to as Intelegencia) has been partnering with its global clients, some of which are Fortune 1000 companies, that leverage and rely on our broad portfolio of Digital Transformation, Software Architecture/R&D, Customer Care/BPO, E-commerce, Software services, Quality Assurance, Analytics/ML and Cloud Engineering offerings. Led by a strong leadership group, the globally acclaimed service firm today supports over 100 clients across North America, the Middle East, Europe, and APAC, with offices in the U.S., Europe, India, and the Philippines. Supported by outstanding talent, Intelegencia blends technical and functional expertise with comprehensive cross-vertical and cross-domain knowledge to help achieve business objectives. Its consistent successes have led to global recognition from Deloitte twice, first as one of India’s Fast 50 Technology companies and secondly as one of Asia’s Fast 500 Technology companies. Intelegencia is an official Microsoft Gold Certified partner, as well as a Salesforce Partner. Intelegencia’s clientele is primarily international, mainly based in the US and UK.
+
+Project Title: Walmart Growth Project
+Service Description: To drive qualified, purchase-ready traffic to the Client’s product listings on Walmart.com and generate consistent sales for the brand’s core longevity supplement line in the US market. This engagement will focus on Phase 1 of the Client’s marketplace growth strategy: establishing Walmart.com as a profitable, performance-driven sales channel.
+
+Intelegencia will provide end-to-end marketing support across campaign execution, keyword optimization, Marketplace SEO, creative design (Ads & rich media assets like product images), Walmart A+ creation, and content delivery, ensuring the brand stands out in a competitive supplements category.
+
+The aim is to validate product-market fit on Walmart, build a sales pipeline, and set the foundation for expansion into platforms like Amazon in later stages.
+Annual Project Budget: 50,000
+Target Geographic Area: US
+
+IMPORTANT: Write ONLY the content for the "Definitions and Acronyms" section. Do not include section headings, titles, or any other parts of the document. Just provide the body content for this specific section that would appear under the "Definitions and Acronyms" heading.
+
+Please write comprehensive, professional content that is appropriate for this section of a Statement of Work document. Use clear formatting with bullet points, numbered lists, or tables where appropriate. Make it specific to this project and companies involved.
