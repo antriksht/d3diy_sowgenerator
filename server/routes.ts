@@ -55,46 +55,105 @@ ${getSectionExample(sectionTitle)}
 
 Please write comprehensive, professional content that is appropriate for this section of a Statement of Work document. Use clear formatting with bullet points, numbered lists, or tables where appropriate. Make it specific to this project and companies involved.`;
 
+      // Log the full prompt being sent to AI
+      console.log('\n=== AI GENERATION REQUEST ===');
+      console.log(`Section: ${sectionTitle}`);
+      console.log(`Client: ${clientCompany.name}`);
+      console.log(`Service Provider: ${yourCompany.name}`);
+      console.log(`Project: ${project.title}`);
+      console.log('\n--- FULL PROMPT ---');
+      console.log(prompt);
+      console.log('\n--- END PROMPT ---\n');
+
       let result = "";
 
       // Try OpenAI first, then Gemini as fallback
       if (effectiveOpenAIKey) {
         try {
+          console.log('\n=== TRYING OPENAI ===');
+          console.log('Model: gpt-4o-mini');
+          console.log('Temperature: 0.5');
+          console.log('Max tokens: 8000');
+          
+          const openaiBody = {
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content: "You are a professional business proposal writer. Generate well-structured, professional content for Statement of Work documents. Use appropriate formatting, bullet points, and tables where relevant.",
+              },
+              {
+                role: "user",
+                content: prompt,
+              },
+            ],
+            max_tokens: 8000,
+            temperature: 0.5,
+          };
+          
+          console.log('\n--- OPENAI REQUEST BODY ---');
+          console.log(JSON.stringify(openaiBody, null, 2));
+          
           const response = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${effectiveOpenAIKey}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              model: "gpt-4o-mini",
-              messages: [
-                {
-                  role: "system",
-                  content: "You are a professional business proposal writer. Generate well-structured, professional content for Statement of Work documents. Use appropriate formatting, bullet points, and tables where relevant.",
-                },
-                {
-                  role: "user",
-                  content: prompt,
-                },
-              ],
-              max_tokens: 8000,
-              temperature: 0.5,
-            }),
+            body: JSON.stringify(openaiBody),
           });
 
+          console.log(`\n--- OPENAI RESPONSE STATUS: ${response.status} ---`);
+          
           if (response.ok) {
             const data = await response.json();
+            console.log('\n--- OPENAI RESPONSE DATA ---');
+            console.log(JSON.stringify(data, null, 2));
+            
             result = data.choices[0]?.message?.content || "";
+            console.log('\n--- EXTRACTED CONTENT ---');
+            console.log(result);
+            console.log('\n--- END OPENAI SUCCESS ---\n');
+          } else {
+            const errorData = await response.text();
+            console.log('\n--- OPENAI ERROR RESPONSE ---');
+            console.log(errorData);
+            console.log('\n--- END OPENAI ERROR ---\n');
           }
         } catch (error) {
+          console.log('\n--- OPENAI EXCEPTION ---');
           console.error("OpenAI error:", error);
+          console.log('\n--- END OPENAI EXCEPTION ---\n');
         }
       }
 
       // Try Gemini if OpenAI failed or unavailable
       if (!result && effectiveGeminiKey) {
         try {
+          console.log('\n=== TRYING GEMINI ===');
+          console.log('Model: gemini-2.5-flash');
+          console.log('Temperature: 0.5');
+          console.log('Max tokens: 8000');
+          
+          const geminiBody = {
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt,
+                  },
+                ],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.5,
+              maxOutputTokens: 8000,
+            },
+          };
+          
+          console.log('\n--- GEMINI REQUEST BODY ---');
+          console.log(JSON.stringify(geminiBody, null, 2));
+          
           const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${effectiveGeminiKey}`,
             {
@@ -102,40 +161,56 @@ Please write comprehensive, professional content that is appropriate for this se
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({
-                contents: [
-                  {
-                    parts: [
-                      {
-                        text: prompt,
-                      },
-                    ],
-                  },
-                ],
-                generationConfig: {
-                  temperature: 0.5,
-                  maxOutputTokens: 8000,
-                },
-              }),
+              body: JSON.stringify(geminiBody),
             }
           );
 
+          console.log(`\n--- GEMINI RESPONSE STATUS: ${response.status} ---`);
+
           if (response.ok) {
             const data = await response.json();
+            console.log('\n--- GEMINI RESPONSE DATA ---');
+            console.log(JSON.stringify(data, null, 2));
+            
             result = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            console.log('\n--- EXTRACTED CONTENT ---');
+            console.log(result);
+            console.log('\n--- END GEMINI SUCCESS ---\n');
+          } else {
+            const errorData = await response.text();
+            console.log('\n--- GEMINI ERROR RESPONSE ---');
+            console.log(errorData);
+            console.log('\n--- END GEMINI ERROR ---\n');
           }
         } catch (error) {
+          console.log('\n--- GEMINI EXCEPTION ---');
           console.error("Gemini error:", error);
+          console.log('\n--- END GEMINI EXCEPTION ---\n');
         }
       }
 
       if (!result) {
+        console.log('\n=== FINAL ERROR ===');
+        console.log('No content generated from any AI service');
+        console.log('OpenAI Available:', !!effectiveOpenAIKey);
+        console.log('Gemini Available:', !!effectiveGeminiKey);
+        console.log('=== END FINAL ERROR ===\n');
         return res.status(500).json({ error: "Failed to generate content with available AI services." });
       }
 
+      console.log('\n=== GENERATION SUCCESS ===');
+      console.log(`Section: ${sectionTitle}`);
+      console.log('Content Length:', result.length);
+      console.log('Content Preview:', result.substring(0, 200) + '...');
+      console.log('=== END SUCCESS ===\n');
+
       res.json({ content: result });
     } catch (error) {
+      console.log('\n=== CRITICAL ERROR ===');
       console.error("Generation error:", error);
+      console.log('Error details:', error.message);
+      console.log('Error stack:', error.stack);
+      console.log('=== END CRITICAL ERROR ===\n');
       res.status(500).json({ error: "Internal server error during content generation." });
     }
   });
