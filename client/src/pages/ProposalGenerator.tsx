@@ -85,6 +85,8 @@ export default function ProposalGenerator() {
         const path = error.path.join('.');
         errorMap[path] = error.message;
       });
+      console.log('Validation errors:', errorMap);
+      console.log('Config data:', config);
       setValidationErrors(errorMap);
       return false;
     }
