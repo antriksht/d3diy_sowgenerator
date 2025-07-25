@@ -90,6 +90,9 @@ export function SectionGeneratorTab({
             key={section.id}
             section={section}
             sectionPrompts={settings.sectionPrompts}
+            yourCompany={config.yourCompany}
+            clientCompany={config.clientCompany}
+            project={config.project}
             onGenerate={onGenerateSection}
             onContentChange={onContentChange}
             onPromptSave={onPromptSave}

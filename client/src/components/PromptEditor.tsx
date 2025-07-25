@@ -3,37 +3,47 @@ import { Edit, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { SectionPrompt } from '../types/proposal';
+import { SectionPrompt, CompanyInfo, ProjectInfo } from '../types/proposal';
 import { defaultSections } from '../data/defaultSections';
+import { populatePromptTemplate, extractTemplateFromPopulated } from '../utils/promptUtils';
 
 interface PromptEditorProps {
   sectionTitle: string;
   sectionPrompts: SectionPrompt[];
+  yourCompany?: CompanyInfo;
+  clientCompany?: CompanyInfo;
+  project?: ProjectInfo;
   onPromptSave: (sectionTitle: string, customPrompt?: string) => void;
 }
 
-export function PromptEditor({ sectionTitle, sectionPrompts, onPromptSave }: PromptEditorProps) {
+export function PromptEditor({ sectionTitle, sectionPrompts, yourCompany, clientCompany, project, onPromptSave }: PromptEditorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [editedPrompt, setEditedPrompt] = useState('');
 
   const sectionPrompt = sectionPrompts?.find(p => p.sectionTitle === sectionTitle);
   const defaultSection = defaultSections.find(s => s.title === sectionTitle);
-  const currentPrompt = sectionPrompt?.customPrompt || defaultSection?.prompt || '';
+  const templatePrompt = sectionPrompt?.customPrompt || defaultSection?.prompt || '';
   const hasCustomPrompt = !!sectionPrompt?.customPrompt;
+  
+  // Populate the template with actual values for user-friendly editing
+  const populatedPrompt = populatePromptTemplate(templatePrompt, yourCompany, clientCompany, project, sectionTitle);
 
   const handleOpen = () => {
-    setEditedPrompt(currentPrompt);
+    setEditedPrompt(populatedPrompt);
     setIsOpen(true);
   };
 
   const handleSave = () => {
-    onPromptSave(sectionTitle, editedPrompt);
+    // Convert the populated prompt back to template format for storage
+    const templatePrompt = extractTemplateFromPopulated(editedPrompt, yourCompany, clientCompany, project, sectionTitle);
+    onPromptSave(sectionTitle, templatePrompt);
     setIsOpen(false);
   };
 
   const handleReset = () => {
     const defaultPrompt = defaultSection?.prompt || '';
-    setEditedPrompt(defaultPrompt);
+    const populatedDefault = populatePromptTemplate(defaultPrompt, yourCompany, clientCompany, project, sectionTitle);
+    setEditedPrompt(populatedDefault);
     onPromptSave(sectionTitle, undefined);
     setIsOpen(false);
   };

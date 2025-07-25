@@ -3,12 +3,15 @@ import { ChevronDown, RotateCcw, Check, Clock, AlertCircle, Edit3 } from 'lucide
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { ProposalSection, SectionPrompt } from '../types/proposal';
+import { ProposalSection, SectionPrompt, CompanyInfo, ProjectInfo } from '../types/proposal';
 import { PromptEditor } from './PromptEditor';
 
 interface SectionAccordionProps {
   section: ProposalSection;
   sectionPrompts: SectionPrompt[];
+  yourCompany: CompanyInfo;
+  clientCompany: CompanyInfo;
+  project: ProjectInfo;
   onGenerate: (sectionId: string) => void;
   onContentChange: (sectionId: string, content: string) => void;
   onPromptSave: (sectionTitle: string, customPrompt?: string) => void;
@@ -18,6 +21,9 @@ interface SectionAccordionProps {
 export function SectionAccordion({ 
   section, 
   sectionPrompts,
+  yourCompany,
+  clientCompany,
+  project,
   onGenerate, 
   onContentChange, 
   onPromptSave,
@@ -94,6 +100,9 @@ export function SectionAccordion({
           <PromptEditor
             sectionTitle={section.title}
             sectionPrompts={sectionPrompts}
+            yourCompany={yourCompany}
+            clientCompany={clientCompany}
+            project={project}
             onPromptSave={onPromptSave}
           />
           <Button
