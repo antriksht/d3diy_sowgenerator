@@ -30,6 +30,23 @@ Since its inception, {yourCompany.name} has been partnering with its global clie
   {
     sectionTitle: 'Definitions and Acronyms',
     isDefault: true,
+    customPrompt: `Create a Definitions and Acronyms section with a professional table format. Include:
+
+REQUIRED ENTRIES:
+- Client: {clientCompany.name} and its Affiliates
+- {yourCompany.name}: [Short form/abbreviation for your company]
+- Project: {project.title}
+
+ADDITIONAL RELEVANT ACRONYMS:
+Add 5-8 relevant technical or business acronyms based on the project description and services. Examples might include:
+- SEO, PPC, CRM, API, SaaS, ROI, KPI, etc. (choose what's relevant to the project)
+
+FORMAT:
+| Acronym | Explanation |
+|---|---|
+| [entries here] |
+
+Keep it concise and relevant to this specific project and companies.`,
     exampleContent: `The acronyms that may be encountered in this document are listed in the table below:
 
 | Acronym | Explanation |
