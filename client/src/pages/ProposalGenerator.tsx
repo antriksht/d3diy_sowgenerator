@@ -77,6 +77,27 @@ export default function ProposalGenerator() {
     }
   }, [config.sections]);
 
+  // Update settings to ensure latest default prompts are included
+  useEffect(() => {
+    const needsUpdate = settings.sectionPrompts.some(savedPrompt => {
+      const defaultPrompt = defaultSectionPrompts.find(dp => dp.sectionTitle === savedPrompt.sectionTitle);
+      return defaultPrompt && defaultPrompt.customPrompt && !savedPrompt.customPrompt;
+    });
+
+    if (needsUpdate) {
+      const updatedPrompts = settings.sectionPrompts.map(savedPrompt => {
+        const defaultPrompt = defaultSectionPrompts.find(dp => dp.sectionTitle === savedPrompt.sectionTitle);
+        if (defaultPrompt && defaultPrompt.customPrompt && !savedPrompt.customPrompt) {
+          return { ...savedPrompt, customPrompt: defaultPrompt.customPrompt };
+        }
+        return savedPrompt;
+      });
+      
+      setSettings({ ...settings, sectionPrompts: updatedPrompts });
+      console.log('Updated settings with latest default prompts');
+    }
+  }, []);
+
   // Validation
   const validateForm = useCallback(() => {
     const result = validateConfiguration(config);

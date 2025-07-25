@@ -5,25 +5,22 @@ export const defaultSectionPrompts: SectionPrompt[] = [
   {
     sectionTitle: 'Introduction',
     isDefault: true,
-    customPrompt: `Write exactly two company descriptions with proper headings. Follow this exact format:
+    customPrompt: `Write a simple Introduction section with exactly this format:
 
 {yourCompany.name}
-[Write comprehensive description of your company here]
+[Company description based on provided information]
+Website: {yourCompany.website}
 
 {clientCompany.name}
-[Write comprehensive description of client company here]
+[Company description based on provided information]  
+Website: {clientCompany.website}
 
-ABSOLUTE REQUIREMENTS:
-- Start with "{yourCompany.name}" as the first heading
-- Write a full paragraph describing your company
-- Then add "{clientCompany.name}" as the second heading  
-- Write a full paragraph describing the client company
-- STOP IMMEDIATELY after the client company description
-- DO NOT add any sentences about projects, collaboration, or this Statement of Work
-- DO NOT add conclusion paragraphs or project references
-- The content must end with the client company description
-
-This section introduces ONLY the companies - nothing else.`,
+REQUIREMENTS:
+- Use the exact company names as headings
+- Write one paragraph for each company
+- Include the website for each company
+- STOP after the second company's website
+- DO NOT add project information, collaboration details, or additional content`,
     exampleContent: `{yourCompany.name}
 Since its inception, {yourCompany.name} has been partnering with its global clients, some of which are Fortune 1000 companies, that leverage and rely on our broad portfolio of Digital Transformation, Software Architecture/R&D, Customer Care/BPO, E-commerce, Software services, Quality Assurance, Analytics/ML and Cloud Engineering offerings. Led by a strong leadership group, the globally acclaimed service firm today supports over 100 clients across North America, the Middle East, Europe, and APAC, with offices in the U.S., Europe, India, and the Philippines. Supported by outstanding talent, {yourCompany.name} blends technical and functional expertise with comprehensive cross-vertical and cross-domain knowledge to help achieve business objectives. Its consistent successes have led to global recognition from Deloitte twice, first as one of India's Fast 50 Technology companies and secondly as one of Asia's Fast 500 Technology companies. {yourCompany.name} is an official Microsoft Gold Certified partner, as well as a Salesforce Partner. {yourCompany.name}'s clientele is primarily international, mainly based in the US and UK.
 
