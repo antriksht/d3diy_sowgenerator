@@ -1,9 +1,16 @@
 import { z } from 'zod';
 
+// Flexible URL validation that accepts any text input
+const flexibleUrl = z.string().optional().refine((val) => {
+  if (!val || val.trim() === '') return true;
+  // Accept any non-empty string as a valid website
+  return val.trim().length > 0;
+}, { message: 'Website cannot be empty if provided' });
+
 export const companyInfoSchema = z.object({
   name: z.string().min(1, 'Company name is required'),
-  website: z.string().optional(),
-  logoUrl: z.string().optional(),
+  website: flexibleUrl,
+  logoUrl: flexibleUrl,
   description: z.string().min(1, 'Description is required')
 });
 
