@@ -21,14 +21,14 @@ function cleanAIResponse(content: string, sectionTitle: string): string {
   // More aggressive pattern to remove any remaining dashes and unwanted content
   const unwantedPatterns = [
     // Remove anything that looks like ending commentary
-    /\n*---+.*$/gis,
-    /\n*--+.*$/gis,
-    /\n*-+\s*$/gis,
-    /This .+ section is designed.*$/gis,
-    /This .+ is designed.*$/gis,
-    /This section.*$/gis,
-    /\*\*Note:.*$/gis,
-    /Note:.*$/gis,
+    /\n*---+.*$/gi,
+    /\n*--+.*$/gi,
+    /\n*-+\s*$/gi,
+    /This .+ section is designed.*$/gi,
+    /This .+ is designed.*$/gi,
+    /This section.*$/gi,
+    /\*\*Note:.*$/gi,
+    /Note:.*$/gi,
     // Remove standalone dashes that might become bullets
     /\n\s*-\s*$/gi,
     /\n\s*--\s*$/gi,
