@@ -312,18 +312,7 @@ ${sectionExample}`;
           });
       }
 
-      // Clean up unwanted content from AI responses
-      console.log("\n=== BEFORE CLEANING ===");
-      console.log("Original content length:", result.length);
-      console.log("Original content preview:", result.substring(result.length - 300));
-      console.log("=== END BEFORE CLEANING ===\n");
-      
-      result = cleanAIResponse(result, sectionTitle);
-      
-      console.log("\n=== AFTER CLEANING ===");
-      console.log("Cleaned content length:", result.length);
-      console.log("Cleaned content preview:", result.substring(result.length - 300));
-      console.log("=== END AFTER CLEANING ===\n");
+      // Note: Content cleaning is now handled in the DOCX export service
 
       console.log("\n=== GENERATION SUCCESS ===");
       console.log(`Section: ${sectionTitle}`);

@@ -155,8 +155,15 @@ export class DocxService {
       }),
     ];
 
+    // Clean the content before processing - remove everything after "---"
+    let cleanedContent = section.content;
+    const dashIndex = cleanedContent.indexOf('---');
+    if (dashIndex !== -1) {
+      cleanedContent = cleanedContent.substring(0, dashIndex).trim();
+    }
+
     // Split content by paragraphs and handle markdown formatting
-    const contentLines = section.content.split('\n');
+    const contentLines = cleanedContent.split('\n');
     let currentParagraph = '';
     let inTable = false;
     let tableRows: string[][] = [];
