@@ -30,7 +30,7 @@ Since its inception, {yourCompany.name} has been partnering with its global clie
   {
     sectionTitle: 'Definitions and Acronyms',
     isDefault: true,
-    customPrompt: `Create a Definitions and Acronyms section with a professional table format. Include:
+    customPrompt: `Create a Definitions and Acronyms section with a professional table format. Start with just "# Definitions and Acronyms" as the header. Include:
 
 REQUIRED ENTRIES:
 - Client: {clientCompany.name} and its Affiliates
@@ -61,7 +61,7 @@ Table 1`
   {
     sectionTitle: 'Objective',
     isDefault: true,
-    customPrompt: `Write a clear, concise Objective section that defines the primary goals of this project. Include:
+    customPrompt: `Write a clear, concise Objective section that defines the primary goals of this project. Start with just "# Objective" as the header. Include:
 
 PRIMARY OBJECTIVE:
 - Main business goal or outcome the client wants to achieve
@@ -85,7 +85,7 @@ The aim is to validate product-market fit on Walmart, build a sales pipeline, an
   {
     sectionTitle: 'Scope',
     isDefault: true,
-    customPrompt: `Create a comprehensive Scope section that clearly defines what is included in this project. Structure it as:
+    customPrompt: `Create a comprehensive Scope section that clearly defines what is included in this project. Start with just "# Scope" as the header. Structure it as:
 
 PROJECT SCOPE OVERVIEW:
 - Brief summary of what this engagement covers
@@ -162,7 +162,7 @@ Expansion to Amazon, Target+, or {clientCompany.website} (DTC) will be proposed 
   {
     sectionTitle: 'Solution Framework',
     isDefault: true,
-    customPrompt: `Create a detailed Solution Framework section that explains the methodology and approach. Include:
+    customPrompt: `Create a detailed Solution Framework section that explains the methodology and approach. Start with just "# Solution Framework" as the header. Include:
 
 METHODOLOGY OVERVIEW:
 - High-level approach or framework being used
@@ -216,7 +216,7 @@ Coordinate Walmart-native promotions to align with high-traffic weeks.`
   {
     sectionTitle: 'Deliverables',
     isDefault: true,
-    customPrompt: `Create a clear Deliverables section with specific outputs and timelines. Include:
+    customPrompt: `Create a clear Deliverables section with specific outputs and timelines. Start with just "# Deliverables" as the header. Include:
 
 MAIN DELIVERABLES:
 - List 5-8 key deliverables based on: {project.serviceDescription}
@@ -260,7 +260,7 @@ Table 3`
   {
     sectionTitle: 'Client Responsibilities',
     isDefault: true,
-    customPrompt: `Define clear Client Responsibilities to ensure project success. Include:
+    customPrompt: `Define clear Client Responsibilities to ensure project success. Start with just "# Client Responsibilities" as the header. Include:
 
 KEY RESPONSIBILITIES:
 - Designate single point of contact (SPOC)
@@ -302,7 +302,7 @@ Provide timely input and decisions to prevent project delays and ensure performa
   {
     sectionTitle: 'Limitations',
     isDefault: true,
-    customPrompt: `Create a clear Limitations section that sets proper expectations. Include:
+    customPrompt: `Create a clear Limitations section that sets proper expectations. Start with just "# Limitations" as the header. Include:
 
 OUT OF SCOPE:
 - 5-7 specific items that are NOT included in this project
@@ -338,7 +338,7 @@ Paid media ad budget is not included in this SOW and will be handled directly by
   {
     sectionTitle: 'General Operations',
     isDefault: true,
-    customPrompt: `Create a General Operations section covering operational aspects. Include:
+    customPrompt: `Create a General Operations section covering operational aspects. Start with just "# General Operations" as the header. Include:
 
 GOVERNANCE MODEL:
 - Reference to governing agreements (NDA, MSA)
@@ -385,7 +385,7 @@ If the SOW signature date is beyond the Estimated Start Date, then the Estimated
   {
     sectionTitle: 'Commercial Proposal',
     isDefault: true,
-    customPrompt: `Create a comprehensive Commercial Proposal section. Include:
+    customPrompt: `Create a comprehensive Commercial Proposal section. Start with just "# Commercial Proposal" as the header. Include:
 
 PRICING STRUCTURE:
 - Monthly or project-based fees
@@ -464,7 +464,7 @@ Table 5`
   {
     sectionTitle: 'Termination',
     isDefault: true,
-    customPrompt: `Create a clear Termination section covering contract termination procedures. Include:
+    customPrompt: `Create a clear Termination section covering contract termination procedures. Start with just "# Termination" as the header. Include:
 
 TERMINATION PROCEDURES:
 - Notice period required (typically 30 days)
