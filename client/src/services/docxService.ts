@@ -1,4 +1,4 @@
-import { Document, Packer, Paragraph, TextRun, Table, TableCell, TableRow, HeadingLevel, AlignmentType, BorderStyle, WidthType } from 'docx';
+import { Document, Packer, Paragraph, TextRun, Table, TableCell, TableRow, HeadingLevel, AlignmentType, BorderStyle, WidthType, LevelFormat, convertInchesToTwip } from 'docx';
 import { ProposalConfig, ProposalSection } from '../types/proposal';
 
 export class DocxService {
@@ -160,27 +160,21 @@ export class DocxService {
     let currentParagraph = '';
     let inTable = false;
     let tableRows: string[][] = [];
+    let inList = false;
+    let listItems: Array<{text: string, level: number}> = [];
 
     for (const line of contentLines) {
       const trimmedLine = line.trim();
       
       // Check if this is a markdown header
       if (trimmedLine.startsWith('#')) {
-        // Add any accumulated paragraph content first
-        if (currentParagraph.trim()) {
-          paragraphs.push(this.createFormattedParagraph(currentParagraph.trim()));
-          currentParagraph = '';
-        }
-        
-        // End table if we were in one
-        if (inTable) {
-          if (tableRows.length > 0) {
-            const table = this.createTable(tableRows);
-            paragraphs.push(table as any);
-          }
-          tableRows = [];
-          inTable = false;
-        }
+        // Process any accumulated content first
+        this.flushAccumulatedContent(paragraphs, currentParagraph, inTable, tableRows, inList, listItems);
+        currentParagraph = '';
+        inTable = false;
+        inList = false;
+        tableRows = [];
+        listItems = [];
         
         // Parse markdown header
         const headerMatch = trimmedLine.match(/^(#{1,6})\s*(.+)$/);
@@ -208,14 +202,33 @@ export class DocxService {
         continue;
       }
       
+      // Check if this is a list item (- or * at start)
+      const listMatch = trimmedLine.match(/^(\s*)[-*]\s*(.+)$/);
+      if (listMatch) {
+        const [, indent, text] = listMatch;
+        const level = Math.floor(indent.length / 2); // 2 spaces per level
+        
+        if (!inList) {
+          // Process any accumulated content first
+          this.flushAccumulatedContent(paragraphs, currentParagraph, inTable, tableRows, false, []);
+          currentParagraph = '';
+          inTable = false;
+          tableRows = [];
+          inList = true;
+        }
+        
+        listItems.push({ text: text.trim(), level });
+        continue;
+      }
+      
       // Check if this is a table row
       if (trimmedLine.startsWith('|') && trimmedLine.endsWith('|')) {
         if (!inTable) {
-          // Start of table - add any accumulated paragraph content first
-          if (currentParagraph.trim()) {
-            paragraphs.push(this.createFormattedParagraph(currentParagraph.trim()));
-            currentParagraph = '';
-          }
+          // Process any accumulated content first
+          this.flushAccumulatedContent(paragraphs, currentParagraph, false, [], inList, listItems);
+          currentParagraph = '';
+          inList = false;
+          listItems = [];
           inTable = true;
         }
         
@@ -227,14 +240,14 @@ export class DocxService {
         }
         tableRows.push(cells);
       } else {
-        // End of table if we were in one
-        if (inTable) {
-          if (tableRows.length > 0) {
-            const table = this.createTable(tableRows);
-            paragraphs.push(table as any);
-          }
-          tableRows = [];
+        // Process any accumulated content if switching modes
+        if (inList || inTable) {
+          this.flushAccumulatedContent(paragraphs, currentParagraph, inTable, tableRows, inList, listItems);
+          currentParagraph = '';
           inTable = false;
+          inList = false;
+          tableRows = [];
+          listItems = [];
         }
         
         // Regular paragraph content
@@ -250,22 +263,43 @@ export class DocxService {
     }
 
     // Add any remaining content
-    if (inTable && tableRows.length > 0) {
+    this.flushAccumulatedContent(paragraphs, currentParagraph, inTable, tableRows, inList, listItems);
+
+    return paragraphs;
+  }
+
+  private flushAccumulatedContent(
+    paragraphs: any[], 
+    currentParagraph: string, 
+    inTable: boolean, 
+    tableRows: string[][], 
+    inList: boolean, 
+    listItems: Array<{text: string, level: number}>
+  ) {
+    if (inList && listItems.length > 0) {
+      paragraphs.push(...this.createBulletList(listItems));
+    } else if (inTable && tableRows.length > 0) {
       const table = this.createTable(tableRows);
       paragraphs.push(table as any);
     } else if (currentParagraph.trim()) {
       paragraphs.push(this.createFormattedParagraph(currentParagraph.trim()));
     }
-
-    return paragraphs;
   }
 
-  private createFormattedParagraph(text: string) {
-    // Parse markdown formatting like **bold** and create appropriate text runs
-    const parts: any[] = [];
-    let currentText = text;
-    
-    // Handle bold text (**text**)
+  private createBulletList(listItems: Array<{text: string, level: number}>) {
+    return listItems.map(item => 
+      new Paragraph({
+        children: this.parseFormattedText(item.text),
+        bullet: {
+          level: item.level
+        },
+        spacing: { after: 100 }
+      })
+    );
+  }
+
+  private parseFormattedText(text: string): TextRun[] {
+    const parts: TextRun[] = [];
     const boldRegex = /\*\*(.*?)\*\*/g;
     let lastIndex = 0;
     let match;
@@ -297,8 +331,12 @@ export class DocxService {
       parts.push(new TextRun({ text: text, font: "Arial" }));
     }
     
+    return parts;
+  }
+
+  private createFormattedParagraph(text: string) {
     return new Paragraph({
-      children: parts,
+      children: this.parseFormattedText(text),
       spacing: { after: 200 },
     });
   }
