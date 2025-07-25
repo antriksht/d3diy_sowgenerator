@@ -270,8 +270,21 @@ export class DocxService {
             paragraphs.push(this.createFormattedParagraph(currentParagraph.trim()));
             currentParagraph = '';
           }
+          // Add extra spacing for signature sections
+          if (currentParagraph === '' && !inList && !inTable) {
+            paragraphs.push(new Paragraph({ children: [], spacing: { after: 100 } }));
+          }
         } else {
-          currentParagraph += (currentParagraph ? ' ' : '') + trimmedLine;
+          // Handle signature lines specially
+          if (trimmedLine.includes('____') || trimmedLine.match(/^(By|Name|Title|Date):\s*_+/)) {
+            if (currentParagraph.trim()) {
+              paragraphs.push(this.createFormattedParagraph(currentParagraph.trim()));
+              currentParagraph = '';
+            }
+            paragraphs.push(this.createSignatureLine(trimmedLine));
+          } else {
+            currentParagraph += (currentParagraph ? ' ' : '') + trimmedLine;
+          }
         }
       }
     }
@@ -321,6 +334,32 @@ export class DocxService {
 
   private parseFormattedText(text: string): TextRun[] {
     const parts: TextRun[] = [];
+    
+    // Handle signature lines with underscores (e.g., "By: ____________________")
+    if (text.includes('____')) {
+      const signatureLineRegex = /(.+?)(_{4,})(.*)/g;
+      const match = signatureLineRegex.exec(text);
+      if (match) {
+        const [, beforeLine, underscores, afterLine] = match;
+        
+        if (beforeLine.trim()) {
+          parts.push(new TextRun({ text: beforeLine, font: "Arial" }));
+        }
+        
+        // Create a proper underline with spaces
+        const lineLength = Math.max(underscores.length, 30);
+        const underlinePart = '_'.repeat(lineLength);
+        parts.push(new TextRun({ text: underlinePart, font: "Arial" }));
+        
+        if (afterLine.trim()) {
+          parts.push(new TextRun({ text: afterLine, font: "Arial" }));
+        }
+        
+        return parts;
+      }
+    }
+    
+    // Handle bold text formatting
     const boldRegex = /\*\*(.*?)\*\*/g;
     let lastIndex = 0;
     let match;
@@ -353,6 +392,13 @@ export class DocxService {
     }
     
     return parts;
+  }
+
+  private createSignatureLine(text: string) {
+    return new Paragraph({
+      children: this.parseFormattedText(text),
+      spacing: { after: 300, before: 200 },
+    });
   }
 
   private createFormattedParagraph(text: string) {

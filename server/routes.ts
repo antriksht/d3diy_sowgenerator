@@ -2,6 +2,39 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
+function cleanAIResponse(content: string, sectionTitle: string): string {
+  let cleaned = content;
+  
+  // Remove common unwanted ending patterns
+  const unwantedPatterns = [
+    /---\s*\n\nThis .+ section is designed to .+\./gi,
+    /---\s*\n\nThis .+ is designed to .+\./gi,
+    /---\s*\n\n.+ section is designed to ensure .+\./gi,
+    /---\s*\n\n.+ is designed to ensure .+\./gi,
+    /This .+ section is designed to ensure .+$/gi,
+    /This .+ is designed to ensure .+$/gi,
+    /---\s*$/gi,
+    /\n\n---\s*\n\n.*$/gi,
+    /\n---\s*\n.*$/gi
+  ];
+  
+  for (const pattern of unwantedPatterns) {
+    cleaned = cleaned.replace(pattern, '');
+  }
+  
+  // Clean up any trailing --- or similar markers
+  cleaned = cleaned.replace(/\n*---+\s*\n*.*$/gi, '');
+  
+  // Remove any trailing explanatory text that starts with "This [section name]"
+  const sectionNamePattern = new RegExp(`\\n*This ${sectionTitle}.*$`, 'gi');
+  cleaned = cleaned.replace(sectionNamePattern, '');
+  
+  // Clean up excessive whitespace
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n').trim();
+  
+  return cleaned;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // AI Generation endpoint
   app.post("/api/generate", async (req, res) => {
@@ -260,6 +293,9 @@ ${sectionExample}`;
             error: "Failed to generate content with available AI services.",
           });
       }
+
+      // Clean up unwanted content from AI responses
+      result = cleanAIResponse(result, sectionTitle);
 
       console.log("\n=== GENERATION SUCCESS ===");
       console.log(`Section: ${sectionTitle}`);
