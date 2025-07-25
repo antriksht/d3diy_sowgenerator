@@ -5,41 +5,50 @@ import { storage } from "./storage";
 function cleanAIResponse(content: string, sectionTitle: string): string {
   let cleaned = content;
   
+  console.log("=== CLEANING PROCESS START ===");
+  console.log("Section:", sectionTitle);
+  console.log("Original content includes '---':", cleaned.includes('---'));
+  
   // Find and remove everything after "---" marker (including the dashes themselves)
   const dashMarkerIndex = cleaned.indexOf('---');
   if (dashMarkerIndex !== -1) {
+    console.log("Found '---' at position:", dashMarkerIndex);
+    console.log("Content after '---':", cleaned.substring(dashMarkerIndex));
     cleaned = cleaned.substring(0, dashMarkerIndex);
+    console.log("After removing content after '---', length:", cleaned.length);
   }
   
-  // Also check for single or double dashes at the end
-  const singleDashIndex = cleaned.lastIndexOf('\n-');
-  if (singleDashIndex !== -1 && singleDashIndex > cleaned.length - 10) {
-    cleaned = cleaned.substring(0, singleDashIndex);
-  }
-  
-  const doubleDashIndex = cleaned.lastIndexOf('\n--');
-  if (doubleDashIndex !== -1 && doubleDashIndex > cleaned.length - 10) {
-    cleaned = cleaned.substring(0, doubleDashIndex);
-  }
-  
-  // Additional cleanup patterns for any remaining unwanted content
+  // More aggressive pattern to remove any remaining dashes and unwanted content
   const unwantedPatterns = [
-    /This .+ section is designed to .+$/gi,
-    /This .+ is designed to .+$/gi,
-    /\n*This section .+$/gi,
-    /\n*---+.*$/gi,
-    /\n*--+.*$/gi,
-    /\n*-+\s*$/gi,  // Remove trailing dashes
-    /\n*\*\*Note:.*$/gi,
-    /\n*Note:.*$/gi
+    // Remove anything that looks like ending commentary
+    /\n*---+.*$/gis,
+    /\n*--+.*$/gis,
+    /\n*-+\s*$/gis,
+    /This .+ section is designed.*$/gis,
+    /This .+ is designed.*$/gis,
+    /This section.*$/gis,
+    /\*\*Note:.*$/gis,
+    /Note:.*$/gis,
+    // Remove standalone dashes that might become bullets
+    /\n\s*-\s*$/gi,
+    /\n\s*--\s*$/gi,
+    /\n\s*---+\s*$/gi
   ];
   
   for (const pattern of unwantedPatterns) {
+    const beforeReplace = cleaned.length;
     cleaned = cleaned.replace(pattern, '');
+    if (beforeReplace !== cleaned.length) {
+      console.log("Pattern matched and removed content, new length:", cleaned.length);
+    }
   }
   
   // Clean up excessive whitespace and trim
   cleaned = cleaned.replace(/\n{3,}/g, '\n\n').trim();
+  
+  console.log("=== CLEANING PROCESS END ===");
+  console.log("Final cleaned length:", cleaned.length);
+  console.log("Final content ends with:", cleaned.substring(cleaned.length - 100));
   
   return cleaned;
 }
@@ -304,7 +313,17 @@ ${sectionExample}`;
       }
 
       // Clean up unwanted content from AI responses
+      console.log("\n=== BEFORE CLEANING ===");
+      console.log("Original content length:", result.length);
+      console.log("Original content preview:", result.substring(result.length - 300));
+      console.log("=== END BEFORE CLEANING ===\n");
+      
       result = cleanAIResponse(result, sectionTitle);
+      
+      console.log("\n=== AFTER CLEANING ===");
+      console.log("Cleaned content length:", result.length);
+      console.log("Cleaned content preview:", result.substring(result.length - 300));
+      console.log("=== END AFTER CLEANING ===\n");
 
       console.log("\n=== GENERATION SUCCESS ===");
       console.log(`Section: ${sectionTitle}`);
