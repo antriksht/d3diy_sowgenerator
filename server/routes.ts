@@ -37,10 +37,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Build dynamic prompt using custom prompts or fallback
       const buildPrompt = () => {
-        // Use custom prompt if provided, otherwise use fallback
-        const basePrompt =
-          customPrompt ||
-          `Write a professional ${sectionTitle} section for a Statement of Work document.
+        // If custom prompt is provided, use it with minimal context
+        if (customPrompt) {
+          let prompt = `${customPrompt}
+
+Client Company: ${clientCompany.name}
+Client Description: ${clientCompany.description}
+
+Your Company: ${yourCompany.name}
+Company Description: ${yourCompany.description}`;
+
+          // Only add project info if this is NOT the Introduction section
+          if (sectionTitle !== 'Introduction') {
+            prompt += `
+
+Project Title: ${project.title}
+Service Description: ${project.serviceDescription}
+${project.annualBudget ? `Annual Project Budget: ${project.annualBudget}` : ""}
+${project.targetGeo ? `Target Geographic Area: ${project.targetGeo}` : ""}`;
+          }
+
+          // Add section example if provided and not Introduction
+          if (sectionExample && sectionTitle !== 'Introduction') {
+            prompt += `
+
+EXAMPLE FORMAT FOR ${sectionTitle.toUpperCase()} SECTION:
+Use this as inspiration for structure and style, but customize all content for the actual companies:
+
+${sectionExample}`;
+          } else if (sectionExample && sectionTitle === 'Introduction') {
+            prompt += `
+
+EXAMPLE FORMAT FOR COMPANY INTRODUCTIONS:
+Use this structure but only write about the companies themselves:
+
+${sectionExample}`;
+          }
+
+          return prompt;
+        }
+
+        // Fallback prompt when no custom prompt is provided
+        const basePrompt = `Write a professional ${sectionTitle} section for a Statement of Work document.
 
 Client Company: ${clientCompany.name}
 Client Description: ${clientCompany.description}
