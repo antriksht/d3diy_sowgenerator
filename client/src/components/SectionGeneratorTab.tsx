@@ -1,10 +1,11 @@
 import React from 'react';
-import { Wand2, Download, CheckCircle, Clock } from 'lucide-react';
+import { Wand2, Download, CheckCircle, Clock, TestTube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { SectionAccordion } from './SectionAccordion';
 import { PromptEditor } from './PromptEditor';
 import { ProposalSection, ProposalConfig, AISettings } from '../types/proposal';
+import { docxService } from '../services/docxService';
 
 interface SectionGeneratorTabProps {
   sections: ProposalSection[];
@@ -35,6 +36,14 @@ export function SectionGeneratorTab({
   const totalSections = sections.length;
   const progressPercentage = (completedSections / totalSections) * 100;
 
+  const handleTestDocument = async () => {
+    try {
+      await docxService.downloadTestDocument();
+    } catch (error) {
+      console.error('Test document generation failed:', error);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-fade-in-up">
       <div className="flex items-center justify-between">
@@ -43,24 +52,36 @@ export function SectionGeneratorTab({
           <p className="text-gray-600">Generate and edit individual proposal sections using AI.</p>
         </div>
         
-        <Button
-          onClick={onGenerateAll}
-          disabled={isGenerating}
-          size="lg"
-          className="btn-primary"
-        >
-          {isGenerating ? (
-            <>
-              <Clock className="h-5 w-5 mr-2 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            <>
-              <Wand2 className="h-5 w-5 mr-2" />
-              Generate All
-            </>
-          )}
-        </Button>
+        <div className="flex space-x-3">
+          <Button
+            onClick={handleTestDocument}
+            variant="outline"
+            size="sm"
+            className="text-blue-600 border-blue-300 hover:bg-blue-50"
+          >
+            <TestTube className="h-4 w-4 mr-2" />
+            Test Export
+          </Button>
+          
+          <Button
+            onClick={onGenerateAll}
+            disabled={isGenerating}
+            size="lg"
+            className="btn-primary"
+          >
+            {isGenerating ? (
+              <>
+                <Clock className="h-5 w-5 mr-2 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Wand2 className="h-5 w-5 mr-2" />
+                Generate All
+              </>
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Progress Section */}

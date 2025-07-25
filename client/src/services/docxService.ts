@@ -599,6 +599,57 @@ export class DocxService {
       throw new Error('Failed to generate document. Please try again.');
     }
   }
+
+  // Test method to generate a minimal document
+  async generateTestDocument(): Promise<Blob> {
+    console.log('Generating test document...');
+    
+    const doc = new Document({
+      styles: {
+        default: {
+          document: {
+            run: {
+              font: "Arial",
+              size: 22,
+            },
+          },
+        },
+      },
+      sections: [{
+        properties: {},
+        children: [
+          new Paragraph({
+            children: [new TextRun({ text: "Test Document", font: "Arial", bold: true })],
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "This is a simple test document.", font: "Arial" })],
+          }),
+        ],
+      }],
+    });
+
+    console.log('Test document structure created, generating blob...');
+    const blob = await Packer.toBlob(doc);
+    console.log('Test blob generated successfully, size:', blob.size, 'bytes');
+    return blob;
+  }
+
+  async downloadTestDocument() {
+    try {
+      const blob = await this.generateTestDocument();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'test_document.docx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      console.log('Test document download completed');
+    } catch (error) {
+      console.error('Error generating test document:', error);
+    }
+  }
 }
 
 export const docxService = new DocxService();
