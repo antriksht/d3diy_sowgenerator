@@ -5,25 +5,25 @@ export const defaultSectionPrompts: SectionPrompt[] = [
   {
     sectionTitle: 'Introduction',
     isDefault: true,
-    customPrompt: `Write ONLY company introductions. This section introduces the two companies separately without any mention of projects, collaborations, or work together.
+    customPrompt: `Write exactly two company descriptions with proper headings. Follow this exact format:
 
-REQUIRED FORMAT:
 {yourCompany.name}
-[Company description paragraph]
+[Write comprehensive description of your company here]
 
-{clientCompany.name} 
-[Company description paragraph]
+{clientCompany.name}
+[Write comprehensive description of client company here]
 
-STRICT RULES:
-- Write ONLY about each company's general background, services, and achievements
-- Use the company name as a heading for each section
-- DO NOT mention any project, collaboration, partnership, or work between the companies
-- DO NOT include project titles, budgets, timelines, or objectives
-- DO NOT reference "this project," "this initiative," "upcoming project," or similar terms
-- DO NOT mention specific deliverables or services being provided
-- End after describing both companies - add NO additional content
+ABSOLUTE REQUIREMENTS:
+- Start with "{yourCompany.name}" as the first heading
+- Write a full paragraph describing your company
+- Then add "{clientCompany.name}" as the second heading  
+- Write a full paragraph describing the client company
+- STOP IMMEDIATELY after the client company description
+- DO NOT add any sentences about projects, collaboration, or this Statement of Work
+- DO NOT add conclusion paragraphs or project references
+- The content must end with the client company description
 
-This is purely a company introduction section, not a project overview.`,
+This section introduces ONLY the companies - nothing else.`,
     exampleContent: `{yourCompany.name}
 Since its inception, {yourCompany.name} has been partnering with its global clients, some of which are Fortune 1000 companies, that leverage and rely on our broad portfolio of Digital Transformation, Software Architecture/R&D, Customer Care/BPO, E-commerce, Software services, Quality Assurance, Analytics/ML and Cloud Engineering offerings. Led by a strong leadership group, the globally acclaimed service firm today supports over 100 clients across North America, the Middle East, Europe, and APAC, with offices in the U.S., Europe, India, and the Philippines. Supported by outstanding talent, {yourCompany.name} blends technical and functional expertise with comprehensive cross-vertical and cross-domain knowledge to help achieve business objectives. Its consistent successes have led to global recognition from Deloitte twice, first as one of India's Fast 50 Technology companies and secondly as one of Asia's Fast 500 Technology companies. {yourCompany.name} is an official Microsoft Gold Certified partner, as well as a Salesforce Partner. {yourCompany.name}'s clientele is primarily international, mainly based in the US and UK.
 
