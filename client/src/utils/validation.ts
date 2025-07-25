@@ -2,14 +2,16 @@ import { z } from 'zod';
 
 export const companyInfoSchema = z.object({
   name: z.string().min(1, 'Company name is required'),
-  website: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
-  logoUrl: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
+  website: z.string().optional(),
+  logoUrl: z.string().optional(),
   description: z.string().min(1, 'Description is required')
 });
 
 export const projectInfoSchema = z.object({
   title: z.string().min(1, 'Project title is required'),
-  serviceDescription: z.string().min(1, 'Service description is required')
+  serviceDescription: z.string().min(1, 'Service description is required'),
+  annualBudget: z.string().optional(),
+  targetGeo: z.string().optional()
 });
 
 export const configurationSchema = z.object({
