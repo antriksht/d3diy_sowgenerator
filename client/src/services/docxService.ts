@@ -10,6 +10,7 @@ export class DocxService {
             text: `${config.clientCompany.name}`,
             bold: true,
             size: 48,
+            font: "Arial",
           }),
         ],
         alignment: AlignmentType.CENTER,
@@ -21,6 +22,7 @@ export class DocxService {
             text: config.project.title,
             bold: true,
             size: 36,
+            font: "Arial",
           }),
         ],
         alignment: AlignmentType.CENTER,
@@ -32,6 +34,7 @@ export class DocxService {
             text: "Statement of Work",
             italics: true,
             size: 24,
+            font: "Arial",
           }),
         ],
         alignment: AlignmentType.CENTER,
@@ -46,11 +49,17 @@ export class DocxService {
           new TableRow({
             children: [
               new TableCell({
-                children: [new Paragraph({ text: "Document ID", alignment: AlignmentType.LEFT })],
+                children: [new Paragraph({ 
+              children: [new TextRun({ text: "Document ID", font: "Arial" })],
+              alignment: AlignmentType.LEFT 
+            })],
                 width: { size: 30, type: WidthType.PERCENTAGE },
               }),
               new TableCell({
-                children: [new Paragraph({ text: "SOW-001", alignment: AlignmentType.LEFT })],
+                children: [new Paragraph({ 
+                  children: [new TextRun({ text: "SOW-001", font: "Arial" })],
+                  alignment: AlignmentType.LEFT 
+                })],
                 width: { size: 70, type: WidthType.PERCENTAGE },
               }),
             ],
@@ -58,30 +67,48 @@ export class DocxService {
           new TableRow({
             children: [
               new TableCell({
-                children: [new Paragraph({ text: "Version", alignment: AlignmentType.LEFT })],
+                children: [new Paragraph({ 
+                  children: [new TextRun({ text: "Version", font: "Arial" })],
+                  alignment: AlignmentType.LEFT 
+                })],
               }),
               new TableCell({
-                children: [new Paragraph({ text: "v1.0", alignment: AlignmentType.LEFT })],
-              }),
-            ],
-          }),
-          new TableRow({
-            children: [
-              new TableCell({
-                children: [new Paragraph({ text: "Date", alignment: AlignmentType.LEFT })],
-              }),
-              new TableCell({
-                children: [new Paragraph({ text: new Date().toLocaleDateString(), alignment: AlignmentType.LEFT })],
+                children: [new Paragraph({ 
+                  children: [new TextRun({ text: "v1.0", font: "Arial" })],
+                  alignment: AlignmentType.LEFT 
+                })],
               }),
             ],
           }),
           new TableRow({
             children: [
               new TableCell({
-                children: [new Paragraph({ text: "Prepared by", alignment: AlignmentType.LEFT })],
+                children: [new Paragraph({ 
+                  children: [new TextRun({ text: "Date", font: "Arial" })],
+                  alignment: AlignmentType.LEFT 
+                })],
               }),
               new TableCell({
-                children: [new Paragraph({ text: config.yourCompany.name, alignment: AlignmentType.LEFT })],
+                children: [new Paragraph({ 
+                  children: [new TextRun({ text: new Date().toLocaleDateString(), font: "Arial" })],
+                  alignment: AlignmentType.LEFT 
+                })],
+              }),
+            ],
+          }),
+          new TableRow({
+            children: [
+              new TableCell({
+                children: [new Paragraph({ 
+                  children: [new TextRun({ text: "Prepared by", font: "Arial" })],
+                  alignment: AlignmentType.LEFT 
+                })],
+              }),
+              new TableCell({
+                children: [new Paragraph({ 
+                  children: [new TextRun({ text: config.yourCompany.name, font: "Arial" })],
+                  alignment: AlignmentType.LEFT 
+                })],
               }),
             ],
           }),
@@ -102,8 +129,8 @@ export class DocxService {
     const tocItems = sections.map((section, index) => 
       new Paragraph({
         children: [
-          new TextRun(`${index + 1}. ${section.title}`),
-          new TextRun(`\t${index + 3}`), // Page numbers start from page 3
+          new TextRun({ text: `${index + 1}. ${section.title}`, font: "Arial" }),
+          new TextRun({ text: `\t${index + 3}`, font: "Arial" }), // Page numbers start from page 3
         ],
         spacing: { after: 100 },
       })
@@ -248,12 +275,12 @@ export class DocxService {
       if (match.index > lastIndex) {
         const beforeText = text.substring(lastIndex, match.index);
         if (beforeText.trim()) {
-          parts.push(new TextRun({ text: beforeText }));
+          parts.push(new TextRun({ text: beforeText, font: "Arial" }));
         }
       }
       
       // Add the bold text
-      parts.push(new TextRun({ text: match[1], bold: true }));
+      parts.push(new TextRun({ text: match[1], bold: true, font: "Arial" }));
       lastIndex = match.index + match[0].length;
     }
     
@@ -261,13 +288,13 @@ export class DocxService {
     if (lastIndex < text.length) {
       const remainingText = text.substring(lastIndex);
       if (remainingText.trim()) {
-        parts.push(new TextRun({ text: remainingText }));
+        parts.push(new TextRun({ text: remainingText, font: "Arial" }));
       }
     }
     
     // If no formatting was found, just use the plain text
     if (parts.length === 0) {
-      parts.push(new TextRun({ text: text }));
+      parts.push(new TextRun({ text: text, font: "Arial" }));
     }
     
     return new Paragraph({
@@ -284,8 +311,11 @@ export class DocxService {
         children: row.map(cell => 
           new TableCell({
             children: [new Paragraph({ 
-              text: cell,
-              ...(rowIndex === 0 ? { bold: true } : {})
+              children: [new TextRun({
+                text: cell,
+                font: "Arial",
+                ...(rowIndex === 0 ? { bold: true } : {})
+              })]
             })],
           })
         ),
@@ -341,6 +371,36 @@ export class DocxService {
     ];
 
     const doc = new Document({
+      styles: {
+        default: {
+          heading1: {
+            run: {
+              size: 28,
+              bold: true,
+              font: "Arial",
+            },
+            paragraph: {
+              spacing: { after: 240 },
+            },
+          },
+          heading2: {
+            run: {
+              size: 24,
+              bold: true,
+              font: "Arial",
+            },
+            paragraph: {
+              spacing: { after: 200 },
+            },
+          },
+          document: {
+            run: {
+              font: "Arial",
+              size: 22,
+            },
+          },
+        },
+      },
       sections: [{
         properties: {},
         children,
