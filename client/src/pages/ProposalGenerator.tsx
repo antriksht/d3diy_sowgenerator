@@ -10,6 +10,7 @@ import { SettingsTab } from '../components/SettingsTab';
 import { aiService } from '../services/aiService';
 import { docxService } from '../services/docxService';
 import { validateConfiguration } from '../utils/validation';
+import { populatePromptTemplate } from '../utils/promptUtils';
 import { ProposalState, ProposalSection, ProposalConfig, AISettings } from '../types/proposal';
 import { defaultSectionPrompts, defaultFallbackPrompt } from '../data/defaultSections';
 
@@ -170,6 +171,18 @@ export default function ProposalGenerator() {
       // Find custom prompt and example for this section
       const sectionPrompt = settings.sectionPrompts.find(p => p.sectionTitle === section.title);
       
+      // Populate custom prompt if it exists, otherwise use fallback
+      let finalCustomPrompt: string | undefined;
+      if (sectionPrompt?.customPrompt) {
+        finalCustomPrompt = populatePromptTemplate(
+          sectionPrompt.customPrompt,
+          config.yourCompany,
+          config.clientCompany,
+          config.project,
+          section.title
+        );
+      }
+      
       const content = await aiService.generateSection({
         sectionTitle: section.title,
         yourCompany: config.yourCompany,
@@ -178,7 +191,13 @@ export default function ProposalGenerator() {
         useSystemKeys: settings.useSystemKeys,
         openaiApiKey: settings.openaiApiKey,
         geminiApiKey: settings.geminiApiKey,
-        customPrompt: sectionPrompt?.customPrompt || settings.fallbackPrompt,
+        customPrompt: finalCustomPrompt || populatePromptTemplate(
+          settings.fallbackPrompt || '',
+          config.yourCompany,
+          config.clientCompany,
+          config.project,
+          section.title
+        ),
         sectionExample: sectionPrompt?.exampleContent,
       });
 
