@@ -16,7 +16,7 @@ export function PromptEditor({ sectionTitle, sectionPrompts, onPromptSave }: Pro
   const [isOpen, setIsOpen] = useState(false);
   const [editedPrompt, setEditedPrompt] = useState('');
 
-  const sectionPrompt = sectionPrompts.find(p => p.sectionTitle === sectionTitle);
+  const sectionPrompt = sectionPrompts?.find(p => p.sectionTitle === sectionTitle);
   const defaultSection = defaultSections.find(s => s.title === sectionTitle);
   const currentPrompt = sectionPrompt?.customPrompt || defaultSection?.prompt || '';
   const hasCustomPrompt = !!sectionPrompt?.customPrompt;
