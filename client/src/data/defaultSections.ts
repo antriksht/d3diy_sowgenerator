@@ -61,6 +61,21 @@ Table 1`
   {
     sectionTitle: 'Objective',
     isDefault: true,
+    customPrompt: `Write a clear, concise Objective section that defines the primary goals of this project. Include:
+
+PRIMARY OBJECTIVE:
+- Main business goal or outcome the client wants to achieve
+- Specific focus areas based on the service description: {project.serviceDescription}
+
+SECONDARY OBJECTIVES:
+- 2-3 supporting goals that align with the primary objective
+- Measurable outcomes where applicable
+
+TARGET MARKET:
+- Geographic focus: {project.targetGeo}
+- Any relevant market or industry specifics
+
+Keep it professional, specific to this project, and focused on business outcomes rather than technical details.`,
     exampleContent: `To drive qualified, purchase-ready traffic to the Client's product listings on Walmart.com and generate consistent sales for the brand's core longevity supplement line in the US market. This engagement will focus on Phase 1 of the Client's marketplace growth strategy: establishing Walmart.com as a profitable, performance-driven sales channel.
 
 {yourCompany.name} will provide end-to-end marketing support across campaign execution, keyword optimization, Marketplace SEO, creative design (Ads & rich media assets like product images), Walmart A+ creation, and content delivery, ensuring the brand stands out in a competitive supplements category.
@@ -70,6 +85,26 @@ The aim is to validate product-market fit on Walmart, build a sales pipeline, an
   {
     sectionTitle: 'Scope',
     isDefault: true,
+    customPrompt: `Create a comprehensive Scope section that clearly defines what is included in this project. Structure it as:
+
+PROJECT SCOPE OVERVIEW:
+- Brief summary of what this engagement covers
+- Key service areas from: {project.serviceDescription}
+
+INCLUDED SERVICES:
+- Break down the main service categories into 3-5 key areas
+- List specific deliverables under each area
+- Use clear headings and bullet points
+
+GEOGRAPHIC/MARKET SCOPE:
+- Target market: {project.targetGeo}
+- Any relevant market-specific considerations
+
+PHASES OR TIMELINE:
+- If applicable, break into phases or implementation stages
+- High-level timeline expectations
+
+Keep it specific, actionable, and directly tied to the service description provided.`,
     exampleContent: `This engagement covers Phase 1 of the client's marketplace growth plan, focused exclusively on Walmart.com. The objective is to drive qualified traffic, improve catalog readiness, and deliver trackable sales impact through high-efficiency campaigns and listing enhancements.
 
 Phase 1 is divided into 2 tracks:
@@ -127,6 +162,27 @@ Expansion to Amazon, Target+, or {clientCompany.website} (DTC) will be proposed 
   {
     sectionTitle: 'Solution Framework',
     isDefault: true,
+    customPrompt: `Create a detailed Solution Framework section that explains the methodology and approach. Include:
+
+METHODOLOGY OVERVIEW:
+- High-level approach or framework being used
+- Key principles or strategies guiding the implementation
+
+IMPLEMENTATION APPROACH:
+- 3-5 main implementation areas based on: {project.serviceDescription}
+- Specific methods, tools, or techniques for each area
+- How different components work together
+
+PROCESS WORKFLOW:
+- Step-by-step process or workflow
+- Dependencies and sequencing
+- Quality assurance or validation steps
+
+TOOLS AND TECHNOLOGIES:
+- Key platforms, tools, or technologies to be used
+- Integration points and data flow
+
+Make it detailed enough to demonstrate expertise while remaining accessible to business stakeholders.`,
     exampleContent: `This outlines how we'll improve Walmart performance for up to 4 priority SKUs in Phase 1 - keeping it lean, impact-focused, and ready for scale.
 
 Product Content Optimization:
@@ -160,6 +216,24 @@ Coordinate Walmart-native promotions to align with high-traffic weeks.`
   {
     sectionTitle: 'Deliverables',
     isDefault: true,
+    customPrompt: `Create a clear Deliverables section with specific outputs and timelines. Include:
+
+MAIN DELIVERABLES:
+- List 5-8 key deliverables based on: {project.serviceDescription}
+- Organize by category or phase
+- Include specific outputs, formats, or assets
+
+DELIVERY TIMELINE:
+- Timeline for each deliverable
+- Dependencies or sequencing
+- Review and approval cycles
+
+QUALITY STANDARDS:
+- Quality criteria or success metrics
+- Review process and stakeholder involvement
+- Revision cycles included
+
+Use tables or structured lists to make deliverables clear and actionable.`,
     exampleContent: `This section outlines the key deliverables and responsibilities for both parties, ensuring a structured execution path aligned with the Client's Phase 1 objectives.
 
 | S.No. | Task Category | Key Deliverables | Responsibility |
@@ -186,6 +260,25 @@ Table 3`
   {
     sectionTitle: 'Client Responsibilities',
     isDefault: true,
+    customPrompt: `Define clear Client Responsibilities to ensure project success. Include:
+
+KEY RESPONSIBILITIES:
+- Designate single point of contact (SPOC)
+- Provide timely access to necessary systems/platforms
+- Share required assets, guidelines, and approvals
+- Meet agreed timelines for feedback and decisions
+
+SPECIFIC REQUIREMENTS:
+- List 5-7 specific responsibilities based on: {project.serviceDescription}
+- Include data, access, or resource requirements
+- Timeline expectations for client deliverables
+
+APPROVAL PROCESS:
+- Review and approval cycles
+- Decision-making authority
+- Escalation procedures
+
+Keep it professional and specific to ensure clear expectations.`,
     exampleContent: `To ensure seamless execution, the Client agrees to:
 
 Designate a Single Point of Contact (SPOC) who will act as the authorized representative for all project-related decisions and approvals.
@@ -209,6 +302,23 @@ Provide timely input and decisions to prevent project delays and ensure performa
   {
     sectionTitle: 'Limitations',
     isDefault: true,
+    customPrompt: `Create a clear Limitations section that sets proper expectations. Include:
+
+OUT OF SCOPE:
+- 5-7 specific items that are NOT included in this project
+- Related services that might be assumed but aren't covered
+- Future phases or additional work not in current scope
+
+CONSTRAINTS AND DEPENDENCIES:
+- Performance limitations or external dependencies
+- Platform or technology constraints
+- Market or regulatory limitations
+
+REVISION LIMITS:
+- Number of revision cycles included
+- Additional work or change request procedures
+
+Keep it professional and help manage client expectations appropriately.`,
     exampleContent: `To maintain project clarity and manage expectations, the following are out of scope for this SOW:
 
 Support for Amazon, Target+, or {clientCompany.website} (DTC) platforms, unless separately scoped and contracted under Phase 2.
@@ -228,6 +338,28 @@ Paid media ad budget is not included in this SOW and will be handled directly by
   {
     sectionTitle: 'General Operations',
     isDefault: true,
+    customPrompt: `Create a General Operations section covering operational aspects. Include:
+
+GOVERNANCE MODEL:
+- Reference to governing agreements (NDA, MSA)
+- Operational framework and reporting structure
+
+WORKING ARRANGEMENTS:
+- Service delivery location and team setup
+- Working hours and time zones
+- Communication protocols
+
+CONTRACT TERMS:
+- Contract duration and start/end dates
+- Extension procedures
+- Key operational policies
+
+FACILITIES AND COVERAGE:
+- Service delivery locations
+- Hours of operation
+- Holiday schedules
+
+Keep it professional and comprehensive for operational clarity.`,
     exampleContent: `## Governance Model for Operation
 
 This SOW shall be governed by the Non-Disclosure Agreement (NDA) dated ______ & Master Service Agreement (MSA) dated _______ executed between Client and {yourCompany.name}, including but not limited to the terms of termination, non-solicitation, non-poaching, force majeure, etc.
@@ -253,6 +385,30 @@ If the SOW signature date is beyond the Estimated Start Date, then the Estimated
   {
     sectionTitle: 'Commercial Proposal',
     isDefault: true,
+    customPrompt: `Create a comprehensive Commercial Proposal section. Include:
+
+PRICING STRUCTURE:
+- Monthly or project-based fees
+- Use the annual budget: {project.annualBudget} as reference
+- Break down pricing by phases or service components
+- Any setup or one-time fees
+
+BILLING AND PAYMENT TERMS:
+- Invoicing schedule and payment terms
+- Late payment policies
+- Currency and tax considerations
+
+ADDITIONAL COSTS:
+- Any variable costs or additional services
+- Third-party costs or platform fees
+- Change request pricing
+
+CONTRACT TERMS:
+- Payment milestones or schedules
+- Contract duration and renewal terms
+- Cancellation policies
+
+Use tables for clarity and ensure all commercial terms are transparent.`,
     exampleContent: `This engagement is structured as a 12-month partnership with a phased billing model to support initial ramp-up and optimization. All commercials are billed in USD.
 
 | Phase | Scope Covered | Monthly Fee |
@@ -308,6 +464,29 @@ Table 5`
   {
     sectionTitle: 'Termination',
     isDefault: true,
+    customPrompt: `Create a clear Termination section covering contract termination procedures. Include:
+
+TERMINATION PROCEDURES:
+- Notice period required (typically 30 days)
+- Termination process and requirements
+- Rights of both parties
+
+POST-TERMINATION OBLIGATIONS:
+- Payment for completed work
+- Asset and data return procedures
+- Ongoing obligations or restrictions
+
+FINAL DELIVERABLES:
+- Work product delivery upon termination
+- Final billing and payment procedures
+- Knowledge transfer requirements
+
+SIGNATURE SECTION:
+- Signature blocks for both companies
+- Include company names: {yourCompany.name} and {clientCompany.name}
+- Date and title fields
+
+Keep it professional and legally appropriate.`,
     exampleContent: `Either Party may terminate this SOW by giving 30 days advance written notice to the other Party. After the termination, the CLIENT shall:
 
 pay any outstanding {yourCompany.name} charges for Services performed and pre-approved documented expenses under this SOW.

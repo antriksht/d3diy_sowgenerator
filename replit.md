@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a React-based proposal generator application that allows users to create professional Statement of Work documents using AI assistance. The application features a tabbed interface for configuration, AI-powered section generation, and DOCX export functionality. It's designed to run entirely in the browser with no backend dependencies for proposal generation.
+This is a React-based AI-powered proposal generator application that creates professional Statement of Work documents with intelligent section generation. The application features a tabbed interface for configuration, customizable AI prompts for each section, and DOCX export functionality. All sections now have custom prompts that generate contextual, project-specific content based on user configuration.
 
 ## User Preferences
 
