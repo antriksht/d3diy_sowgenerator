@@ -118,3 +118,6 @@ The application is designed to work as a standalone frontend application with op
 - Successfully maintained Arial font requirement and professional document structure
 - Content cleaning now works perfectly - removes all unwanted AI text after "---" markers
 - Documents now export cleanly and open properly in Microsoft Word without corruption
+- **Enhanced Formatting (July 25, 2025)**: Rebuilt markdown processing system with improved parsing for headers, bullet points, tables, and bold text
+- **Markdown Export Added (July 25, 2025)**: Added markdown export option alongside DOCX export
+- Removed Test Export button and streamlined export interface with both DOCX and Markdown options

@@ -1,11 +1,11 @@
 import React from 'react';
-import { Wand2, Download, CheckCircle, Clock, TestTube } from 'lucide-react';
+import { Wand2, Download, CheckCircle, Clock, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { SectionAccordion } from './SectionAccordion';
 import { PromptEditor } from './PromptEditor';
 import { ProposalSection, ProposalConfig, AISettings } from '../types/proposal';
-import { docxService } from '../services/docxService';
+import { markdownService } from '../services/markdownService';
 
 interface SectionGeneratorTabProps {
   sections: ProposalSection[];
@@ -15,6 +15,7 @@ interface SectionGeneratorTabProps {
   onGenerateAll: () => void;
   onContentChange: (sectionId: string, content: string) => void;
   onExportDocx: () => void;
+  onExportMarkdown: () => void;
   onPromptSave: (sectionTitle: string, customPrompt?: string) => void;
   isGenerating: boolean;
   canExport: boolean;
@@ -28,6 +29,7 @@ export function SectionGeneratorTab({
   onGenerateAll,
   onContentChange,
   onExportDocx,
+  onExportMarkdown,
   onPromptSave,
   isGenerating,
   canExport
@@ -35,14 +37,6 @@ export function SectionGeneratorTab({
   const completedSections = sections.filter(s => s.status === 'success' || s.status === 'modified').length;
   const totalSections = sections.length;
   const progressPercentage = (completedSections / totalSections) * 100;
-
-  const handleTestDocument = async () => {
-    try {
-      await docxService.downloadTestDocument();
-    } catch (error) {
-      console.error('Test document generation failed:', error);
-    }
-  };
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -53,16 +47,6 @@ export function SectionGeneratorTab({
         </div>
         
         <div className="flex space-x-3">
-          <Button
-            onClick={handleTestDocument}
-            variant="outline"
-            size="sm"
-            className="text-blue-600 border-blue-300 hover:bg-blue-50"
-          >
-            <TestTube className="h-4 w-4 mr-2" />
-            Test Export
-          </Button>
-          
           <Button
             onClick={onGenerateAll}
             disabled={isGenerating}
@@ -132,14 +116,25 @@ export function SectionGeneratorTab({
                 All sections have been generated successfully. Export your professional SOW document.
               </p>
             </div>
-            <Button
-              onClick={onExportDocx}
-              size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold transition-all duration-300 hover:scale-105"
-            >
-              <Download className="h-5 w-5 mr-2" />
-              Export to DOCX
-            </Button>
+            <div className="flex space-x-3">
+              <Button
+                onClick={onExportMarkdown}
+                size="lg"
+                variant="outline"
+                className="border-blue-300 text-blue-600 hover:bg-blue-50 font-semibold transition-all duration-300 hover:scale-105"
+              >
+                <FileText className="h-5 w-5 mr-2" />
+                Export Markdown
+              </Button>
+              <Button
+                onClick={onExportDocx}
+                size="lg"
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold transition-all duration-300 hover:scale-105"
+              >
+                <Download className="h-5 w-5 mr-2" />
+                Export DOCX
+              </Button>
+            </div>
           </div>
         </div>
       )}

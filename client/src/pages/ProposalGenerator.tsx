@@ -9,6 +9,7 @@ import { SectionGeneratorTab } from '../components/SectionGeneratorTab';
 import { SettingsTab } from '../components/SettingsTab';
 import { aiService } from '../services/aiService';
 import { docxService } from '../services/docxService';
+import { markdownService } from '../services/markdownService';
 import { validateConfiguration } from '../utils/validation';
 import { populatePromptTemplate } from '../utils/promptUtils';
 import { ProposalState, ProposalSection, ProposalConfig, AISettings } from '../types/proposal';
@@ -285,7 +286,7 @@ export default function ProposalGenerator() {
     ));
   };
 
-  // Export handler
+  // Export handlers
   const handleExportDocx = async () => {
     try {
       await docxService.downloadDocument(config, sections);
@@ -297,6 +298,22 @@ export default function ProposalGenerator() {
       toast({
         title: "Export Failed",
         description: error instanceof Error ? error.message : "Failed to export document",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleExportMarkdown = async () => {
+    try {
+      markdownService.downloadMarkdownDocument(sections, config);
+      toast({
+        title: "Export Successful",
+        description: "Your proposal has been downloaded as a Markdown file.",
+      });
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: error instanceof Error ? error.message : "Failed to export markdown",
         variant: "destructive",
       });
     }
@@ -491,6 +508,7 @@ export default function ProposalGenerator() {
                     onGenerateAll={handleGenerateAll}
                     onContentChange={handleContentChange}
                     onExportDocx={handleExportDocx}
+                    onExportMarkdown={handleExportMarkdown}
                     onPromptSave={handlePromptSave}
                     isGenerating={isGenerating}
                     canExport={canExport}
