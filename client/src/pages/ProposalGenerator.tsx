@@ -171,6 +171,12 @@ export default function ProposalGenerator() {
       // Find custom prompt and example for this section
       const sectionPrompt = settings.sectionPrompts.find(p => p.sectionTitle === section.title);
       
+      console.log('=== SECTION GENERATION DEBUG ===');
+      console.log('Section Title:', section.title);
+      console.log('Section Prompt Found:', !!sectionPrompt);
+      console.log('Custom Prompt Found:', !!sectionPrompt?.customPrompt);
+      console.log('Available Section Prompts:', settings.sectionPrompts.map(p => p.sectionTitle));
+      
       // Populate custom prompt if it exists, otherwise use fallback
       let finalCustomPrompt: string | undefined;
       if (sectionPrompt?.customPrompt) {
@@ -181,6 +187,9 @@ export default function ProposalGenerator() {
           config.project,
           section.title
         );
+        console.log('Using Custom Prompt for:', section.title);
+      } else {
+        console.log('Using Fallback Prompt for:', section.title);
       }
       
       const content = await aiService.generateSection({
