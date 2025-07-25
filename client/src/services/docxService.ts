@@ -221,6 +221,20 @@ export class DocxService {
         continue;
       }
       
+      // Check if this line continues a list item with more content (after a colon)
+      if (inList && trimmedLine && !trimmedLine.startsWith('-') && !trimmedLine.startsWith('*') && 
+          !trimmedLine.startsWith('#') && !trimmedLine.startsWith('|')) {
+        // This might be continuation of the previous list item
+        if (listItems.length > 0) {
+          const lastItem = listItems[listItems.length - 1];
+          if (lastItem.text.endsWith(':')) {
+            // This is a sub-description for the previous item
+            listItems.push({ text: trimmedLine, level: lastItem.level + 1 });
+            continue;
+          }
+        }
+      }
+      
       // Check if this is a table row
       if (trimmedLine.startsWith('|') && trimmedLine.endsWith('|')) {
         if (!inTable) {
@@ -287,15 +301,22 @@ export class DocxService {
   }
 
   private createBulletList(listItems: Array<{text: string, level: number}>) {
-    return listItems.map(item => 
-      new Paragraph({
+    return listItems.map(item => {
+      const indentLeft = convertInchesToTwip(0.25 * (item.level + 1)); // 0.25 inch per level
+      const hangingIndent = convertInchesToTwip(0.25); // 0.25 inch hanging indent
+      
+      return new Paragraph({
         children: this.parseFormattedText(item.text),
         bullet: {
           level: item.level
         },
+        indent: {
+          left: indentLeft,
+          hanging: hangingIndent
+        },
         spacing: { after: 100 }
-      })
-    );
+      });
+    });
   }
 
   private parseFormattedText(text: string): TextRun[] {
