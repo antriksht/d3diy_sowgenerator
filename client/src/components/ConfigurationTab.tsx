@@ -285,18 +285,6 @@ export function ConfigurationTab({
                   <p className="text-sm text-red-600 mt-1">{validationErrors['project.serviceDescription']}</p>
                 )}
               </div>
-
-              <div>
-                <Label htmlFor="target-geo">Target Geography (Optional)</Label>
-                <Input
-                  id="target-geo"
-                  value={config.project.targetGeo || ''}
-                  onChange={(e) => updateConfig('project.targetGeo', e.target.value)}
-                  placeholder="e.g., United States, Europe, Global"
-                  className="form-input"
-                  disabled={isLocked}
-                />
-              </div>
             </div>
           </div>
         </CardContent>
