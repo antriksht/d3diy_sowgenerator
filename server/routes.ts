@@ -5,31 +5,27 @@ import { storage } from "./storage";
 function cleanAIResponse(content: string, sectionTitle: string): string {
   let cleaned = content;
   
-  // Remove common unwanted ending patterns
+  // Find and remove everything after "---" marker
+  const dashMarkerIndex = cleaned.indexOf('---');
+  if (dashMarkerIndex !== -1) {
+    cleaned = cleaned.substring(0, dashMarkerIndex);
+  }
+  
+  // Additional cleanup patterns for any remaining unwanted content
   const unwantedPatterns = [
-    /---\s*\n\nThis .+ section is designed to .+\./gi,
-    /---\s*\n\nThis .+ is designed to .+\./gi,
-    /---\s*\n\n.+ section is designed to ensure .+\./gi,
-    /---\s*\n\n.+ is designed to ensure .+\./gi,
-    /This .+ section is designed to ensure .+$/gi,
-    /This .+ is designed to ensure .+$/gi,
-    /---\s*$/gi,
-    /\n\n---\s*\n\n.*$/gi,
-    /\n---\s*\n.*$/gi
+    /This .+ section is designed to .+$/gi,
+    /This .+ is designed to .+$/gi,
+    /\n*This section .+$/gi,
+    /\n*---+.*$/gi,
+    /\n*\*\*Note:.*$/gi,
+    /\n*Note:.*$/gi
   ];
   
   for (const pattern of unwantedPatterns) {
     cleaned = cleaned.replace(pattern, '');
   }
   
-  // Clean up any trailing --- or similar markers
-  cleaned = cleaned.replace(/\n*---+\s*\n*.*$/gi, '');
-  
-  // Remove any trailing explanatory text that starts with "This [section name]"
-  const sectionNamePattern = new RegExp(`\\n*This ${sectionTitle}.*$`, 'gi');
-  cleaned = cleaned.replace(sectionNamePattern, '');
-  
-  // Clean up excessive whitespace
+  // Clean up excessive whitespace and trim
   cleaned = cleaned.replace(/\n{3,}/g, '\n\n').trim();
   
   return cleaned;
