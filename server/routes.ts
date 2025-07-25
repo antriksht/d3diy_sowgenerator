@@ -5,10 +5,21 @@ import { storage } from "./storage";
 function cleanAIResponse(content: string, sectionTitle: string): string {
   let cleaned = content;
   
-  // Find and remove everything after "---" marker
+  // Find and remove everything after "---" marker (including the dashes themselves)
   const dashMarkerIndex = cleaned.indexOf('---');
   if (dashMarkerIndex !== -1) {
     cleaned = cleaned.substring(0, dashMarkerIndex);
+  }
+  
+  // Also check for single or double dashes at the end
+  const singleDashIndex = cleaned.lastIndexOf('\n-');
+  if (singleDashIndex !== -1 && singleDashIndex > cleaned.length - 10) {
+    cleaned = cleaned.substring(0, singleDashIndex);
+  }
+  
+  const doubleDashIndex = cleaned.lastIndexOf('\n--');
+  if (doubleDashIndex !== -1 && doubleDashIndex > cleaned.length - 10) {
+    cleaned = cleaned.substring(0, doubleDashIndex);
   }
   
   // Additional cleanup patterns for any remaining unwanted content
@@ -17,6 +28,8 @@ function cleanAIResponse(content: string, sectionTitle: string): string {
     /This .+ is designed to .+$/gi,
     /\n*This section .+$/gi,
     /\n*---+.*$/gi,
+    /\n*--+.*$/gi,
+    /\n*-+\s*$/gi,  // Remove trailing dashes
     /\n*\*\*Note:.*$/gi,
     /\n*Note:.*$/gi
   ];
