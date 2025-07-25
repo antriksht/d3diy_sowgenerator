@@ -502,29 +502,6 @@ Name: ________                  Name: ________
 Title: ________                 Title: ________
 
 Date ________                   Date: ________`
-  },
-  {
-    sectionTitle: 'Appendix 1 – List of Holidays',
-    isDefault: true,
-    exampleContent: `| INDIA HOLIDAY LIST 2025 | INDIA HOLIDAY LIST 2025 | INDIA HOLIDAY LIST 2025 | INDIA HOLIDAY LIST 2025 |
-|---|---|---|---|
-| Sl. No. | DATE | DAY | EVENT |
-| 1 | 1ST JANUARY | WEDNESDAY | NEW YEAR'S DAY |
-| 2 | 26TH JANUARY | SUNDAY | REPUBLIC DAY |
-| 3 | 14TH MARCH | FRIDAY | HOLI |
-| 4 | 31ST MARCH | MONDAY | EID-UL-ADHA |
-| 5 | 14TH APRIL | MONDAY | AMBEDKAR JAYANTI |
-| 6 | 18TH APRIL | FRIDAY | GOOD FRIDAY |
-| 7 | 9TH AUGUST | SATURDAY | RAKSHABANDHAN |
-| 8 | 15TH AUGUST | FRIDAY | INDEPENDENCE DAY |
-| 9 | 16TH AUGUST | SATURDAY | JANAMASHTAMI |
-| 10 | 2ND OCTOBER | THURSDAY | GANDHI JAYANTI/ DUSSEHRA |
-| 11 | 20TH OCTOBER | MONDAY | DIWALI |
-| 12 | 23RD OCTOBER | THURSDAY | BHAI DOOJ |
-| 13 | 5TH NOVOMBER | WEDNESDAY | GURU NANAK JAYANTI |
-| 14 | 25TH DECEMBER | THURSDAY | CHRISTMAS |
-
-Table 6`
   }
 ];
 
