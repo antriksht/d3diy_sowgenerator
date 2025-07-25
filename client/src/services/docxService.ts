@@ -156,10 +156,15 @@ export class DocxService {
     ];
 
     // Clean the content before processing - remove everything after "---"
-    let cleanedContent = section.content;
+    let cleanedContent = section.content || '';
     const dashIndex = cleanedContent.indexOf('---');
     if (dashIndex !== -1) {
       cleanedContent = cleanedContent.substring(0, dashIndex).trim();
+    }
+
+    // Ensure we have some content to prevent empty sections
+    if (!cleanedContent.trim()) {
+      cleanedContent = 'Content not available.';
     }
 
     // Split content by paragraphs and handle markdown formatting
@@ -452,35 +457,58 @@ export class DocxService {
   }
 
   async generateDocument(config: ProposalConfig, sections: ProposalSection[]): Promise<Blob> {
-    const completedSections = sections.filter(section => 
-      section.status === 'success' || section.status === 'modified'
-    );
+    try {
+      const completedSections = sections.filter(section => 
+        section.status === 'success' || section.status === 'modified'
+      );
 
-    const children = [
-      // Title page
-      ...this.createTitlePage(config),
-      
-      // Page break
-      new Paragraph({
-        children: [],
-        pageBreakBefore: true,
-      }),
-      
-      // Table of contents
-      ...this.createTableOfContents(completedSections),
-      
-      // Page break
-      new Paragraph({
-        children: [],
-        pageBreakBefore: true,
-      }),
-      
-      // Sections
-      ...completedSections.flatMap((section, index) => [
-        ...(index > 0 ? [new Paragraph({ children: [], pageBreakBefore: true })] : []),
-        ...this.createSectionContent(section, index),
-      ]),
-    ];
+      console.log('Generating document for', completedSections.length, 'sections');
+
+      const children = [
+        // Title page
+        ...this.createTitlePage(config),
+        
+        // Page break
+        new Paragraph({
+          children: [],
+          pageBreakBefore: true,
+        }),
+        
+        // Table of contents
+        ...this.createTableOfContents(completedSections),
+        
+        // Page break
+        new Paragraph({
+          children: [],
+          pageBreakBefore: true,
+        }),
+        
+        // Sections - with error handling
+        ...completedSections.flatMap((section, index) => {
+          try {
+            console.log(`Processing section ${index}: ${section.title}`);
+            const sectionContent = this.createSectionContent(section, index);
+            return [
+              ...(index > 0 ? [new Paragraph({ children: [], pageBreakBefore: true })] : []),
+              ...sectionContent,
+            ];
+          } catch (error) {
+            console.error(`Error processing section ${section.title}:`, error);
+            return [
+              ...(index > 0 ? [new Paragraph({ children: [], pageBreakBefore: true })] : []),
+              new Paragraph({
+                text: `${index + 1}. ${section.title}`,
+                heading: HeadingLevel.HEADING_1,
+                spacing: { after: 300 },
+              }),
+              new Paragraph({
+                children: [new TextRun({ text: 'Error generating content for this section.', font: 'Arial' })],
+                spacing: { after: 200 },
+              }),
+            ];
+          }
+        }),
+      ];
 
     const doc = new Document({
       styles: {
@@ -519,7 +547,13 @@ export class DocxService {
       }],
     });
 
+    console.log('Document structure created, generating blob...');
     return await Packer.toBlob(doc);
+    
+    } catch (error) {
+      console.error('Error in generateDocument:', error);
+      throw new Error('Failed to generate document: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    }
   }
 
   async downloadDocument(config: ProposalConfig, sections: ProposalSection[]) {
