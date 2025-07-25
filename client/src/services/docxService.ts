@@ -112,9 +112,70 @@ class DocxService {
       cleanedContent = 'Content not available.';
     }
 
-    // Process content line by line for formatting
-    const lines = cleanedContent.split('\n');
-    let currentParagraphText = '';
+    // Split content into blocks first
+    const blocks = this.parseMarkdownBlocks(cleanedContent);
+    
+    for (const block of blocks) {
+      switch (block.type) {
+        case 'header':
+          let headingLevel;
+          switch (block.level) {
+            case 1: headingLevel = HeadingLevel.HEADING_2; break;
+            case 2: headingLevel = HeadingLevel.HEADING_3; break;
+            default: headingLevel = HeadingLevel.HEADING_4; break;
+          }
+          paragraphs.push(new Paragraph({
+            text: block.content,
+            heading: headingLevel,
+            spacing: { before: 200, after: 200 },
+          }));
+          break;
+          
+        case 'bullet':
+          paragraphs.push(new Paragraph({
+            children: this.parseInlineFormatting(block.content),
+            bullet: { level: block.level },
+            indent: { 
+              left: convertInchesToTwip(0.25 * (block.level + 1)), 
+              hanging: convertInchesToTwip(0.25) 
+            },
+            spacing: { after: 100 },
+          }));
+          break;
+          
+        case 'table':
+          if (block.rows && block.rows.length > 0) {
+            paragraphs.push(this.createTable(block.rows));
+          }
+          break;
+          
+        case 'paragraph':
+          if (block.content.trim()) {
+            paragraphs.push(this.createFormattedParagraph(block.content));
+          }
+          break;
+      }
+    }
+
+    console.log(`Section ${section.title} - Generated ${paragraphs.length} paragraphs/elements`);
+    return paragraphs;
+  }
+
+  private parseMarkdownBlocks(content: string): Array<{
+    type: 'header' | 'bullet' | 'table' | 'paragraph';
+    content: string;
+    level?: number;
+    rows?: string[][];
+  }> {
+    const lines = content.split('\n');
+    const blocks: Array<{
+      type: 'header' | 'bullet' | 'table' | 'paragraph';
+      content: string;
+      level?: number;
+      rows?: string[][];
+    }> = [];
+    
+    let currentParagraph = '';
     let inTable = false;
     let tableRows: string[][] = [];
     
@@ -123,57 +184,69 @@ class DocxService {
       
       // Empty line - flush current paragraph
       if (!trimmedLine) {
-        if (currentParagraphText.trim()) {
-          paragraphs.push(this.createFormattedParagraph(currentParagraphText.trim()));
-          currentParagraphText = '';
+        if (currentParagraph.trim()) {
+          blocks.push({ type: 'paragraph', content: currentParagraph.trim() });
+          currentParagraph = '';
         }
-        // Flush table if we were in one
         if (inTable && tableRows.length > 0) {
-          paragraphs.push(this.createTable(tableRows));
+          blocks.push({ type: 'table', content: '', rows: tableRows });
           tableRows = [];
           inTable = false;
         }
         continue;
       }
       
-      // Check for markdown headers
-      if (trimmedLine.startsWith('#')) {
+      // Check for headers
+      const headerMatch = trimmedLine.match(/^(#{1,6})\s+(.+)$/);
+      if (headerMatch) {
         // Flush current content
-        if (currentParagraphText.trim()) {
-          paragraphs.push(this.createFormattedParagraph(currentParagraphText.trim()));
-          currentParagraphText = '';
+        if (currentParagraph.trim()) {
+          blocks.push({ type: 'paragraph', content: currentParagraph.trim() });
+          currentParagraph = '';
         }
         if (inTable && tableRows.length > 0) {
-          paragraphs.push(this.createTable(tableRows));
+          blocks.push({ type: 'table', content: '', rows: tableRows });
           tableRows = [];
           inTable = false;
         }
         
-        // Create header
-        const headerLevel = (trimmedLine.match(/^#+/) || [''])[0].length;
-        const headerText = trimmedLine.replace(/^#+\s*/, '');
-        
-        let headingLevel;
-        switch (headerLevel) {
-          case 1: headingLevel = HeadingLevel.HEADING_2; break;
-          case 2: headingLevel = HeadingLevel.HEADING_3; break;
-          default: headingLevel = HeadingLevel.HEADING_4; break;
+        blocks.push({
+          type: 'header',
+          content: headerMatch[2],
+          level: headerMatch[1].length
+        });
+        continue;
+      }
+      
+      // Check for bullet points
+      const bulletMatch = trimmedLine.match(/^(\s*)[-*+]\s+(.+)$/) || trimmedLine.match(/^(\s*)\d+\.\s+(.+)$/);
+      if (bulletMatch) {
+        // Flush current content
+        if (currentParagraph.trim()) {
+          blocks.push({ type: 'paragraph', content: currentParagraph.trim() });
+          currentParagraph = '';
+        }
+        if (inTable && tableRows.length > 0) {
+          blocks.push({ type: 'table', content: '', rows: tableRows });
+          tableRows = [];
+          inTable = false;
         }
         
-        paragraphs.push(new Paragraph({
-          text: headerText,
-          heading: headingLevel,
-          spacing: { before: 200, after: 200 },
-        }));
+        const indentLevel = Math.floor(bulletMatch[1].length / 2);
+        blocks.push({
+          type: 'bullet',
+          content: bulletMatch[2],
+          level: indentLevel
+        });
         continue;
       }
       
       // Check for table rows
       if (trimmedLine.includes('|') && trimmedLine.split('|').length >= 3) {
         // Flush current paragraph
-        if (currentParagraphText.trim()) {
-          paragraphs.push(this.createFormattedParagraph(currentParagraphText.trim()));
-          currentParagraphText = '';
+        if (currentParagraph.trim()) {
+          blocks.push({ type: 'paragraph', content: currentParagraph.trim() });
+          currentParagraph = '';
         }
         
         const cells = trimmedLine.split('|').map(cell => cell.trim()).filter(cell => cell);
@@ -188,50 +261,25 @@ class DocxService {
         continue;
       }
       
-      // Check for bullet points
-      if (trimmedLine.match(/^[\*\-\+]\s+/) || trimmedLine.match(/^\d+\.\s+/)) {
-        // Flush current content
-        if (currentParagraphText.trim()) {
-          paragraphs.push(this.createFormattedParagraph(currentParagraphText.trim()));
-          currentParagraphText = '';
-        }
-        if (inTable && tableRows.length > 0) {
-          paragraphs.push(this.createTable(tableRows));
-          tableRows = [];
-          inTable = false;
-        }
-        
-        // Create bullet point
-        const bulletText = trimmedLine.replace(/^[\*\-\+]\s+/, '').replace(/^\d+\.\s+/, '');
-        paragraphs.push(new Paragraph({
-          children: this.parseInlineFormatting(bulletText),
-          bullet: { level: 0 },
-          indent: { left: convertInchesToTwip(0.25), hanging: convertInchesToTwip(0.25) },
-          spacing: { after: 100 },
-        }));
-        continue;
-      }
-      
-      // Regular content - accumulate into paragraph
+      // Regular content - accumulate
       if (inTable && tableRows.length > 0) {
-        paragraphs.push(this.createTable(tableRows));
+        blocks.push({ type: 'table', content: '', rows: tableRows });
         tableRows = [];
         inTable = false;
       }
       
-      currentParagraphText += (currentParagraphText ? ' ' : '') + trimmedLine;
+      currentParagraph += (currentParagraph ? ' ' : '') + trimmedLine;
     }
     
-    // Flush any remaining content
-    if (currentParagraphText.trim()) {
-      paragraphs.push(this.createFormattedParagraph(currentParagraphText.trim()));
+    // Flush remaining content
+    if (currentParagraph.trim()) {
+      blocks.push({ type: 'paragraph', content: currentParagraph.trim() });
     }
     if (inTable && tableRows.length > 0) {
-      paragraphs.push(this.createTable(tableRows));
+      blocks.push({ type: 'table', content: '', rows: tableRows });
     }
-
-    console.log(`Section ${section.title} - Generated ${paragraphs.length} paragraphs/elements`);
-    return paragraphs;
+    
+    return blocks;
   }
 
   private parseInlineFormatting(text: string): TextRun[] {
