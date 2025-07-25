@@ -112,21 +112,204 @@ class DocxService {
       cleanedContent = 'Content not available.';
     }
 
-    // SIMPLIFIED APPROACH: Just split by paragraphs and create simple text
-    const paragraphTexts = cleanedContent.split('\n\n').filter(p => p.trim());
+    // Process content line by line for formatting
+    const lines = cleanedContent.split('\n');
+    let currentParagraphText = '';
+    let inTable = false;
+    let tableRows: string[][] = [];
     
-    for (const paragraphText of paragraphTexts) {
-      const cleanText = paragraphText.replace(/\n/g, ' ').trim();
-      if (cleanText) {
-        paragraphs.push(new Paragraph({
-          children: [new TextRun({ text: cleanText, font: "Arial" })],
-          spacing: { after: 200 },
-        }));
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      
+      // Empty line - flush current paragraph
+      if (!trimmedLine) {
+        if (currentParagraphText.trim()) {
+          paragraphs.push(this.createFormattedParagraph(currentParagraphText.trim()));
+          currentParagraphText = '';
+        }
+        // Flush table if we were in one
+        if (inTable && tableRows.length > 0) {
+          paragraphs.push(this.createTable(tableRows));
+          tableRows = [];
+          inTable = false;
+        }
+        continue;
       }
+      
+      // Check for markdown headers
+      if (trimmedLine.startsWith('#')) {
+        // Flush current content
+        if (currentParagraphText.trim()) {
+          paragraphs.push(this.createFormattedParagraph(currentParagraphText.trim()));
+          currentParagraphText = '';
+        }
+        if (inTable && tableRows.length > 0) {
+          paragraphs.push(this.createTable(tableRows));
+          tableRows = [];
+          inTable = false;
+        }
+        
+        // Create header
+        const headerLevel = (trimmedLine.match(/^#+/) || [''])[0].length;
+        const headerText = trimmedLine.replace(/^#+\s*/, '');
+        
+        let headingLevel;
+        switch (headerLevel) {
+          case 1: headingLevel = HeadingLevel.HEADING_2; break;
+          case 2: headingLevel = HeadingLevel.HEADING_3; break;
+          default: headingLevel = HeadingLevel.HEADING_4; break;
+        }
+        
+        paragraphs.push(new Paragraph({
+          text: headerText,
+          heading: headingLevel,
+          spacing: { before: 200, after: 200 },
+        }));
+        continue;
+      }
+      
+      // Check for table rows
+      if (trimmedLine.includes('|') && trimmedLine.split('|').length >= 3) {
+        // Flush current paragraph
+        if (currentParagraphText.trim()) {
+          paragraphs.push(this.createFormattedParagraph(currentParagraphText.trim()));
+          currentParagraphText = '';
+        }
+        
+        const cells = trimmedLine.split('|').map(cell => cell.trim()).filter(cell => cell);
+        // Skip separator rows
+        if (!cells.some(cell => cell.includes('---'))) {
+          if (!inTable) {
+            inTable = true;
+            tableRows = [];
+          }
+          tableRows.push(cells);
+        }
+        continue;
+      }
+      
+      // Check for bullet points
+      if (trimmedLine.match(/^[\*\-\+]\s+/) || trimmedLine.match(/^\d+\.\s+/)) {
+        // Flush current content
+        if (currentParagraphText.trim()) {
+          paragraphs.push(this.createFormattedParagraph(currentParagraphText.trim()));
+          currentParagraphText = '';
+        }
+        if (inTable && tableRows.length > 0) {
+          paragraphs.push(this.createTable(tableRows));
+          tableRows = [];
+          inTable = false;
+        }
+        
+        // Create bullet point
+        const bulletText = trimmedLine.replace(/^[\*\-\+]\s+/, '').replace(/^\d+\.\s+/, '');
+        paragraphs.push(new Paragraph({
+          children: this.parseInlineFormatting(bulletText),
+          bullet: { level: 0 },
+          indent: { left: convertInchesToTwip(0.25), hanging: convertInchesToTwip(0.25) },
+          spacing: { after: 100 },
+        }));
+        continue;
+      }
+      
+      // Regular content - accumulate into paragraph
+      if (inTable && tableRows.length > 0) {
+        paragraphs.push(this.createTable(tableRows));
+        tableRows = [];
+        inTable = false;
+      }
+      
+      currentParagraphText += (currentParagraphText ? ' ' : '') + trimmedLine;
+    }
+    
+    // Flush any remaining content
+    if (currentParagraphText.trim()) {
+      paragraphs.push(this.createFormattedParagraph(currentParagraphText.trim()));
+    }
+    if (inTable && tableRows.length > 0) {
+      paragraphs.push(this.createTable(tableRows));
     }
 
     console.log(`Section ${section.title} - Generated ${paragraphs.length} paragraphs/elements`);
     return paragraphs;
+  }
+
+  private parseInlineFormatting(text: string): TextRun[] {
+    const runs: TextRun[] = [];
+    const boldRegex = /\*\*(.*?)\*\*/g;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = boldRegex.exec(text)) !== null) {
+      // Add text before bold
+      if (match.index > lastIndex) {
+        const beforeText = text.substring(lastIndex, match.index);
+        if (beforeText) {
+          runs.push(new TextRun({ text: beforeText, font: "Arial" }));
+        }
+      }
+      
+      // Add bold text
+      runs.push(new TextRun({ text: match[1], font: "Arial", bold: true }));
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add remaining text
+    if (lastIndex < text.length) {
+      const remainingText = text.substring(lastIndex);
+      if (remainingText) {
+        runs.push(new TextRun({ text: remainingText, font: "Arial" }));
+      }
+    }
+    
+    // If no formatting found, return plain text
+    if (runs.length === 0) {
+      runs.push(new TextRun({ text: text, font: "Arial" }));
+    }
+    
+    return runs;
+  }
+
+  private createFormattedParagraph(text: string): Paragraph {
+    return new Paragraph({
+      children: this.parseInlineFormatting(text),
+      spacing: { after: 200 },
+    });
+  }
+
+  private createTable(rows: string[][]): Table {
+    if (rows.length === 0) {
+      return new Table({ rows: [] });
+    }
+
+    const tableRows = rows.map((row, rowIndex) => 
+      new TableRow({
+        children: row.map(cell => 
+          new TableCell({
+            children: [new Paragraph({ 
+              children: [new TextRun({
+                text: cell || '',
+                font: "Arial",
+                bold: rowIndex === 0
+              })]
+            })],
+          })
+        ),
+      })
+    );
+
+    return new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      rows: tableRows,
+      borders: {
+        top: { style: BorderStyle.SINGLE, size: 1 },
+        bottom: { style: BorderStyle.SINGLE, size: 1 },
+        left: { style: BorderStyle.SINGLE, size: 1 },
+        right: { style: BorderStyle.SINGLE, size: 1 },
+        insideHorizontal: { style: BorderStyle.SINGLE, size: 1 },
+        insideVertical: { style: BorderStyle.SINGLE, size: 1 },
+      },
+    });
   }
 
   async generateDocument(config: ProposalConfig, sections: ProposalSection[]): Promise<Blob> {
