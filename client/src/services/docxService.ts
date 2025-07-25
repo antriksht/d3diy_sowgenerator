@@ -128,7 +128,7 @@ export class DocxService {
       }),
     ];
 
-    // Split content by paragraphs and handle markdown-style tables
+    // Split content by paragraphs and handle markdown formatting
     const contentLines = section.content.split('\n');
     let currentParagraph = '';
     let inTable = false;
@@ -137,15 +137,56 @@ export class DocxService {
     for (const line of contentLines) {
       const trimmedLine = line.trim();
       
+      // Check if this is a markdown header
+      if (trimmedLine.startsWith('#')) {
+        // Add any accumulated paragraph content first
+        if (currentParagraph.trim()) {
+          paragraphs.push(this.createFormattedParagraph(currentParagraph.trim()));
+          currentParagraph = '';
+        }
+        
+        // End table if we were in one
+        if (inTable) {
+          if (tableRows.length > 0) {
+            const table = this.createTable(tableRows);
+            paragraphs.push(table as any);
+          }
+          tableRows = [];
+          inTable = false;
+        }
+        
+        // Parse markdown header
+        const headerMatch = trimmedLine.match(/^(#{1,6})\s*(.+)$/);
+        if (headerMatch) {
+          const [, hashes, headerText] = headerMatch;
+          const level = hashes.length;
+          
+          // Map markdown header levels to Word heading levels
+          let headingLevel;
+          switch (level) {
+            case 1: headingLevel = HeadingLevel.HEADING_1; break;
+            case 2: headingLevel = HeadingLevel.HEADING_2; break;
+            case 3: headingLevel = HeadingLevel.HEADING_3; break;
+            case 4: headingLevel = HeadingLevel.HEADING_4; break;
+            case 5: headingLevel = HeadingLevel.HEADING_5; break;
+            default: headingLevel = HeadingLevel.HEADING_6; break;
+          }
+          
+          paragraphs.push(new Paragraph({
+            text: headerText.trim(),
+            heading: headingLevel,
+            spacing: { after: 200, before: 200 },
+          }));
+        }
+        continue;
+      }
+      
       // Check if this is a table row
       if (trimmedLine.startsWith('|') && trimmedLine.endsWith('|')) {
         if (!inTable) {
           // Start of table - add any accumulated paragraph content first
           if (currentParagraph.trim()) {
-            paragraphs.push(new Paragraph({
-              text: currentParagraph.trim(),
-              spacing: { after: 200 },
-            }));
+            paragraphs.push(this.createFormattedParagraph(currentParagraph.trim()));
             currentParagraph = '';
           }
           inTable = true;
@@ -172,10 +213,7 @@ export class DocxService {
         // Regular paragraph content
         if (trimmedLine === '') {
           if (currentParagraph.trim()) {
-            paragraphs.push(new Paragraph({
-              text: currentParagraph.trim(),
-              spacing: { after: 200 },
-            }));
+            paragraphs.push(this.createFormattedParagraph(currentParagraph.trim()));
             currentParagraph = '';
           }
         } else {
@@ -189,13 +227,53 @@ export class DocxService {
       const table = this.createTable(tableRows);
       paragraphs.push(table as any);
     } else if (currentParagraph.trim()) {
-      paragraphs.push(new Paragraph({
-        text: currentParagraph.trim(),
-        spacing: { after: 200 },
-      }));
+      paragraphs.push(this.createFormattedParagraph(currentParagraph.trim()));
     }
 
     return paragraphs;
+  }
+
+  private createFormattedParagraph(text: string) {
+    // Parse markdown formatting like **bold** and create appropriate text runs
+    const parts: any[] = [];
+    let currentText = text;
+    
+    // Handle bold text (**text**)
+    const boldRegex = /\*\*(.*?)\*\*/g;
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = boldRegex.exec(text)) !== null) {
+      // Add text before the bold part
+      if (match.index > lastIndex) {
+        const beforeText = text.substring(lastIndex, match.index);
+        if (beforeText.trim()) {
+          parts.push(new TextRun({ text: beforeText }));
+        }
+      }
+      
+      // Add the bold text
+      parts.push(new TextRun({ text: match[1], bold: true }));
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add remaining text
+    if (lastIndex < text.length) {
+      const remainingText = text.substring(lastIndex);
+      if (remainingText.trim()) {
+        parts.push(new TextRun({ text: remainingText }));
+      }
+    }
+    
+    // If no formatting was found, just use the plain text
+    if (parts.length === 0) {
+      parts.push(new TextRun({ text: text }));
+    }
+    
+    return new Paragraph({
+      children: parts,
+      spacing: { after: 200 },
+    });
   }
 
   private createTable(rows: string[][]) {
