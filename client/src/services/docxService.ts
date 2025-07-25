@@ -157,18 +157,34 @@ export class DocxService {
 
     // Clean the content before processing - remove everything after "---"
     let cleanedContent = section.content || '';
+    console.log(`Section ${section.title} - Original content length:`, cleanedContent.length);
+    
     const dashIndex = cleanedContent.indexOf('---');
     if (dashIndex !== -1) {
+      console.log(`Section ${section.title} - Found "---" at position:`, dashIndex);
       cleanedContent = cleanedContent.substring(0, dashIndex).trim();
+      console.log(`Section ${section.title} - After cleaning, length:`, cleanedContent.length);
     }
+
+    // Clean up any problematic characters that might cause DOCX corruption
+    cleanedContent = cleanedContent
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '') // Remove control characters
+      .replace(/\u00A0/g, ' ') // Replace non-breaking spaces with regular spaces
+      .replace(/[\u2018\u2019]/g, "'") // Replace smart quotes with regular quotes
+      .replace(/[\u201C\u201D]/g, '"') // Replace smart double quotes
+      .replace(/\u2013/g, '-') // Replace en dash
+      .replace(/\u2014/g, '--') // Replace em dash
+      .trim();
 
     // Ensure we have some content to prevent empty sections
     if (!cleanedContent.trim()) {
+      console.log(`Section ${section.title} - Content was empty, using fallback`);
       cleanedContent = 'Content not available.';
     }
 
     // Split content by paragraphs and handle markdown formatting
     const contentLines = cleanedContent.split('\n');
+    console.log(`Section ${section.title} - Processing ${contentLines.length} lines`);
     let currentParagraph = '';
     let inTable = false;
     let tableRows: string[][] = [];
@@ -304,6 +320,7 @@ export class DocxService {
     // Add any remaining content
     this.flushAccumulatedContent(paragraphs, currentParagraph, inTable, tableRows, inList, listItems);
 
+    console.log(`Section ${section.title} - Generated ${paragraphs.length} paragraphs/elements`);
     return paragraphs;
   }
 
@@ -548,7 +565,9 @@ export class DocxService {
     });
 
     console.log('Document structure created, generating blob...');
-    return await Packer.toBlob(doc);
+    const blob = await Packer.toBlob(doc);
+    console.log('Blob generated successfully, size:', blob.size, 'bytes');
+    return blob;
     
     } catch (error) {
       console.error('Error in generateDocument:', error);
@@ -558,15 +577,23 @@ export class DocxService {
 
   async downloadDocument(config: ProposalConfig, sections: ProposalSection[]) {
     try {
+      console.log('Starting document generation...');
       const blob = await this.generateDocument(config, sections);
+      console.log('Document generated, creating download link...');
+      
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${config.clientCompany.name}_${config.project.title}_SOW.docx`;
+      const filename = `${config.clientCompany.name}_${config.project.title}_SOW.docx`;
+      link.download = filename;
+      console.log('Downloading file:', filename);
+      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+      
+      console.log('Download completed successfully');
     } catch (error) {
       console.error('Error generating document:', error);
       throw new Error('Failed to generate document. Please try again.');
