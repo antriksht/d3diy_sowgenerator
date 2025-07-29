@@ -95,16 +95,8 @@ class DocxService {
       }),
     ];
 
-    // Clean the content before processing - remove everything after "---"
     let cleanedContent = section.content || '';
     console.log(`Section ${section.title} - Original content length:`, cleanedContent.length);
-    
-    const dashIndex = cleanedContent.indexOf('---');
-    if (dashIndex !== -1) {
-      console.log(`Section ${section.title} - Found "---" at position:`, dashIndex);
-      cleanedContent = cleanedContent.substring(0, dashIndex).trim();
-      console.log(`Section ${section.title} - After cleaning, length:`, cleanedContent.length);
-    }
 
     // Ensure we have some content to prevent empty sections
     if (!cleanedContent.trim()) {
