@@ -1,3 +1,9 @@
 [build]
   command = "npm run build"
   publish = "dist/public"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://d3-alpha-sow-forge.replit.app/:splat"
+  status = 200
+  force = true
