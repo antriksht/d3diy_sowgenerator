@@ -1,12 +1,3 @@
 [build]
   command = "npm run build"
   publish = "client/dist"
-
-[build.environment]
-  NODE_VERSION = "18"
-
-[[redirects]]
-  from = "/api/*"
-  to = "https://d3-alpha-sow-forge.replit.app/:splat"
-  status = 200
-  force = true
