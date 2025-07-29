@@ -11,12 +11,13 @@ interface SectionGeneratorTabProps {
   sections: ProposalSection[];
   config: ProposalConfig;
   settings: AISettings;
-  onGenerateSection: (sectionId: string) => void;
+  onGenerateSection: (sectionId: string, sectionTitle: string) => void;
   onGenerateAll: () => void;
   onContentChange: (sectionId: string, content: string) => void;
   onExportDocx: () => void;
   onExportMarkdown: () => void;
   onPromptSave: (sectionTitle: string, customPrompt?: string) => void;
+  onCancelSection: (sectionId: string) => void;
   isGenerating: boolean;
   canExport: boolean;
 }
@@ -31,6 +32,7 @@ export function SectionGeneratorTab({
   onExportDocx,
   onExportMarkdown,
   onPromptSave,
+  onCancelSection,
   isGenerating,
   canExport
 }: SectionGeneratorTabProps) {
@@ -99,6 +101,7 @@ export function SectionGeneratorTab({
             clientCompany={config.clientCompany}
             project={config.project}
             onGenerate={onGenerateSection}
+            onCancel={onCancelSection}
             onContentChange={onContentChange}
             onPromptSave={onPromptSave}
             isGenerating={isGenerating}

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ChevronDown, RotateCcw, Check, Clock, AlertCircle, Edit3 } from 'lucide-react';
+import { ChevronDown, RotateCcw, Check, Clock, AlertCircle, Edit3, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { ProposalSection, SectionPrompt, CompanyInfo, ProjectInfo } from '../types/proposal';
 import { PromptEditor } from './PromptEditor';
+import { ReadOnlyModal } from './ReadOnlyModal';
 
 interface SectionAccordionProps {
   section: ProposalSection;
@@ -12,9 +13,10 @@ interface SectionAccordionProps {
   yourCompany: CompanyInfo;
   clientCompany: CompanyInfo;
   project: ProjectInfo;
-  onGenerate: (sectionId: string) => void;
+  onGenerate: (sectionId: string, sectionTitle: string) => void;
   onContentChange: (sectionId: string, content: string) => void;
   onPromptSave: (sectionTitle: string, customPrompt?: string) => void;
+  onCancel: (sectionId: string) => void;
   isGenerating: boolean;
 }
 
@@ -24,10 +26,11 @@ export function SectionAccordion({
   yourCompany,
   clientCompany,
   project,
-  onGenerate, 
-  onContentChange, 
+  onGenerate,
+  onContentChange,
   onPromptSave,
-  isGenerating 
+  onCancel,
+  isGenerating
 }: SectionAccordionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -97,6 +100,19 @@ export function SectionAccordion({
         </div>
         
         <div className="flex items-center space-x-2">
+          {section.status === 'success' || section.status === 'modified' ? (
+            <ReadOnlyModal
+              title={section.title}
+              content={section.content}
+              triggerButton={
+                <Button variant="outline" size="sm">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Read
+                </Button>
+              }
+            />
+          ) : null}
+
           <PromptEditor
             sectionTitle={section.title}
             sectionPrompts={sectionPrompts}
@@ -105,18 +121,31 @@ export function SectionAccordion({
             project={project}
             onPromptSave={onPromptSave}
           />
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              onGenerate(section.id);
-            }}
-            disabled={isGenerating || section.status === 'generating'}
-            size="sm"
-            className="btn-primary"
-          >
-            <RotateCcw className="h-4 w-4 mr-2" />
-            {getButtonText()}
-          </Button>
+          {section.status === 'generating' ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onCancel(section.id);
+              }}
+            >
+              Cancel
+            </Button>
+          ) : (
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                onGenerate(section.id, section.title);
+              }}
+              disabled={isGenerating || section.status === 'generating'}
+              size="sm"
+              className="btn-primary"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              {getButtonText()}
+            </Button>
+          )}
         </div>
       </div>
       

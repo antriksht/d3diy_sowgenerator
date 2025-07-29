@@ -19,6 +19,7 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
+const rootDir = process.cwd();
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
@@ -46,10 +47,9 @@ export async function setupVite(app: Express, server: Server) {
 
     try {
       const clientTemplate = path.resolve(
-        import.meta.dirname,
-        "..",
+        rootDir,
         "client",
-        "index.html",
+        "index.html"
       );
 
       // always reload the index.html file from disk incase it changes
@@ -68,7 +68,7 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  const distPath = path.resolve(rootDir, "public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(

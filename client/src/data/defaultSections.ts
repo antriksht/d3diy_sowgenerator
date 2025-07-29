@@ -5,7 +5,7 @@ export const defaultSectionPrompts: SectionPrompt[] = [
   {
     sectionTitle: 'Introduction',
     isDefault: true,
-    customPrompt: `Write a simple Introduction section with exactly this format:
+    customPrompt: `Write a simple Introduction section with exactly this format. Start with just "# Introduction" as the header. Include:
 
 {yourCompany.name}
 [Company description based on provided information]
@@ -20,7 +20,9 @@ REQUIREMENTS:
 - Write one paragraph for each company
 - Include the website for each company
 - STOP after the second company's website
-- DO NOT add project information, collaboration details, or additional content`,
+- DO NOT add project information, collaboration details, or additional content.
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`,
     exampleContent: `{yourCompany.name}
 Since its inception, {yourCompany.name} has been partnering with its global clients, some of which are Fortune 1000 companies, that leverage and rely on our broad portfolio of Digital Transformation, Software Architecture/R&D, Customer Care/BPO, E-commerce, Software services, Quality Assurance, Analytics/ML and Cloud Engineering offerings. Led by a strong leadership group, the globally acclaimed service firm today supports over 100 clients across North America, the Middle East, Europe, and APAC, with offices in the U.S., Europe, India, and the Philippines. Supported by outstanding talent, {yourCompany.name} blends technical and functional expertise with comprehensive cross-vertical and cross-domain knowledge to help achieve business objectives. Its consistent successes have led to global recognition from Deloitte twice, first as one of India's Fast 50 Technology companies and secondly as one of Asia's Fast 500 Technology companies. {yourCompany.name} is an official Microsoft Gold Certified partner, as well as a Salesforce Partner. {yourCompany.name}'s clientele is primarily international, mainly based in the US and UK.
 
@@ -75,7 +77,9 @@ TARGET MARKET:
 - Geographic focus: {project.targetGeo}
 - Any relevant market or industry specifics
 
-Keep it professional, specific to this project, and focused on business outcomes rather than technical details.`,
+Keep it professional, specific to this project, and focused on business outcomes rather than technical details.
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`,
     exampleContent: `To drive qualified, purchase-ready traffic to the Client's product listings on Walmart.com and generate consistent sales for the brand's core longevity supplement line in the US market. This engagement will focus on Phase 1 of the Client's marketplace growth strategy: establishing Walmart.com as a profitable, performance-driven sales channel.
 
 {yourCompany.name} will provide end-to-end marketing support across campaign execution, keyword optimization, Marketplace SEO, creative design (Ads & rich media assets like product images), Walmart A+ creation, and content delivery, ensuring the brand stands out in a competitive supplements category.
@@ -104,7 +108,9 @@ PHASES OR TIMELINE:
 - If applicable, break into phases or implementation stages
 - High-level timeline expectations
 
-Keep it specific, actionable, and directly tied to the service description provided.`,
+Keep it specific, actionable, and directly tied to the service description provided.
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`,
     exampleContent: `This engagement covers Phase 1 of the client's marketplace growth plan, focused exclusively on Walmart.com. The objective is to drive qualified traffic, improve catalog readiness, and deliver trackable sales impact through high-efficiency campaigns and listing enhancements.
 
 Phase 1 is divided into 2 tracks:
@@ -182,7 +188,9 @@ TOOLS AND TECHNOLOGIES:
 - Key platforms, tools, or technologies to be used
 - Integration points and data flow
 
-Make it detailed enough to demonstrate expertise while remaining accessible to business stakeholders.`,
+Make it detailed enough to demonstrate expertise while remaining accessible to business stakeholders.
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`,
     exampleContent: `This outlines how we'll improve Walmart performance for up to 4 priority SKUs in Phase 1 - keeping it lean, impact-focused, and ready for scale.
 
 Product Content Optimization:
@@ -233,7 +241,9 @@ QUALITY STANDARDS:
 - Review process and stakeholder involvement
 - Revision cycles included
 
-Use tables or structured lists to make deliverables clear and actionable.`,
+Use tables or structured lists to make deliverables clear and actionable.
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`,
     exampleContent: `This section outlines the key deliverables and responsibilities for both parties, ensuring a structured execution path aligned with the Client's Phase 1 objectives.
 
 | S.No. | Task Category | Key Deliverables | Responsibility |
@@ -255,7 +265,8 @@ For Walmart, we are proposing the following distribution of budget by campaign t
 | Sponsored Brands (if eligible) | Brand visibility with banner ads on search results | 15% | $300 |
 | Test Budget / A/B Reserve | New SKU, seasonal, or competitor retargeting tests | 5% | $100 |
 
-Table 3`
+Table 3
+Do not add a closure statement at all like This approach ensures that all are clearly defined`
   },
   {
     sectionTitle: 'Client Responsibilities',
@@ -278,7 +289,9 @@ APPROVAL PROCESS:
 - Decision-making authority
 - Escalation procedures
 
-Keep it professional and specific to ensure clear expectations.`,
+Keep it professional and specific to ensure clear expectations.
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`,
     exampleContent: `To ensure seamless execution, the Client agrees to:
 
 Designate a Single Point of Contact (SPOC) who will act as the authorized representative for all project-related decisions and approvals.
@@ -318,7 +331,9 @@ REVISION LIMITS:
 - Number of revision cycles included
 - Additional work or change request procedures
 
-Keep it professional and help manage client expectations appropriately.`,
+Keep it professional and help manage client expectations appropriately.
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`,
     exampleContent: `To maintain project clarity and manage expectations, the following are out of scope for this SOW:
 
 Support for Amazon, Target+, or {clientCompany.website} (DTC) platforms, unless separately scoped and contracted under Phase 2.
@@ -359,7 +374,9 @@ FACILITIES AND COVERAGE:
 - Hours of operation
 - Holiday schedules
 
-Keep it professional and comprehensive for operational clarity.`,
+Keep it professional and comprehensive for operational clarity.
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`,
     exampleContent: `## Governance Model for Operation
 
 This SOW shall be governed by the Non-Disclosure Agreement (NDA) dated ______ & Master Service Agreement (MSA) dated _______ executed between Client and {yourCompany.name}, including but not limited to the terms of termination, non-solicitation, non-poaching, force majeure, etc.
@@ -408,7 +425,9 @@ CONTRACT TERMS:
 - Contract duration and renewal terms
 - Cancellation policies
 
-Use tables for clarity and ensure all commercial terms are transparent.`,
+Use tables for clarity and ensure all commercial terms are transparent.
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`,
     exampleContent: `This engagement is structured as a 12-month partnership with a phased billing model to support initial ramp-up and optimization. All commercials are billed in USD.
 
 | Phase | Scope Covered | Monthly Fee |
@@ -459,7 +478,9 @@ The rates contained in are limited to the Scope mentioned under this SOW and do 
 | Beneficiary Address | Mayur Vihar, Delhi-110096 |
 | Purpose of payment Code | "SOFTWARE CONSULTANCY SERVICES" SWIFT CODE DEUTINBBPBC SEND THROUGH DEUTSCHE BANK U.S.A. TO  MUMBAI BANK FINALLY NEW DELHI. |
 
-Table 5`
+Table 5
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`
   },
   {
     sectionTitle: 'Termination',
@@ -486,7 +507,9 @@ SIGNATURE SECTION:
 - Include company names: {yourCompany.name} and {clientCompany.name}
 - Date and title fields
 
-Keep it professional and legally appropriate.`,
+Keep it professional and legally appropriate.
+
+Do not add a closure statement at all like This approach ensures that all are clearly defined`,
     exampleContent: `Either Party may terminate this SOW by giving 30 days advance written notice to the other Party. After the termination, the CLIENT shall:
 
 pay any outstanding {yourCompany.name} charges for Services performed and pre-approved documented expenses under this SOW.

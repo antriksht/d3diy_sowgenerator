@@ -1,5 +1,5 @@
 import React from 'react';
-import { Key, Sliders, Database, Save, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Key, Sliders, Database, Save, Trash2, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,6 +12,7 @@ interface SettingsTabProps {
   onSettingsChange: (settings: AISettings) => void;
   onSaveSettings: () => void;
   onClearStorage: () => void;
+  onResetPrompts: () => void;
   lastSaved?: string;
 }
 
@@ -20,6 +21,7 @@ export function SettingsTab({
   onSettingsChange,
   onSaveSettings,
   onClearStorage,
+  onResetPrompts,
   lastSaved
 }: SettingsTabProps) {
   const [showOpenAIKey, setShowOpenAIKey] = React.useState(false);
@@ -165,6 +167,24 @@ export function SettingsTab({
           </CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+            <div>
+              <h4 className="font-medium text-gray-900">Reset Prompts</h4>
+              <p className="text-sm text-gray-600">
+                Reset all section prompts to their default values.
+              </p>
+            </div>
+            <Button
+              onClick={onResetPrompts}
+              size="sm"
+              variant="outline"
+              className="text-amber-600 border-amber-300 hover:bg-amber-50"
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              Reset Prompts
+            </Button>
+          </div>
+
           <div className="p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between">
               <div>

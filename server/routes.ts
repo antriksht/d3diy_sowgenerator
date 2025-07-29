@@ -210,6 +210,7 @@ ${sectionExample}`;
                 "Content-Type": "application/json",
               },
               body: JSON.stringify(openaiBody),
+              signal: req.signal,
             },
           );
 
@@ -272,6 +273,7 @@ ${sectionExample}`;
                 "Content-Type": "application/json",
               },
               body: JSON.stringify(geminiBody),
+              signal: req.signal,
             },
           );
 

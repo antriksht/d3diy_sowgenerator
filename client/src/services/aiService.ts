@@ -10,6 +10,7 @@ interface AIGenerationOptions {
   geminiApiKey?: string;
   customPrompt?: string;
   sectionExample?: string;
+  signal?: AbortSignal;
 }
 
 export class AIService {
@@ -20,6 +21,7 @@ export class AIService {
         headers: {
           'Content-Type': 'application/json',
         },
+        signal: options.signal,
         body: JSON.stringify({
           sectionTitle: options.sectionTitle,
           yourCompany: options.yourCompany,
